@@ -1,0 +1,84 @@
+.tree-and-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.tree-container {
+    position: relative;
+    width: 250px;
+    height: 450px;
+    perspective: 1000px;
+}
+.ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: #a1887f;
+    border-radius: 10px 10px 0 0;
+    box-shadow: inset 0 4px 8px rgba(0,0,0,0.2);
+}
+.trunk {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    background: #795548;
+    border-radius: 8px 8px 0 0;
+    transition: height 1s ease-out;
+    height: var(--trunk-height, 0px);
+}
+.foliage {
+    position: absolute;
+    left: 50%;
+    background: #66bb6a;
+    border-radius: 50%;
+    transform-origin: bottom center;
+    transition: transform 1s ease-out, opacity 1s ease-out, bottom 1s ease-out;
+    opacity: var(--scale, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.foliage-main {
+    bottom: calc(var(--trunk-height, 0px) + 10px);
+    width: 140px; height: 140px; z-index: 5;
+    transform: translateX(-50%) scale(var(--scale, 0));
+}
+.foliage-left {
+    bottom: calc(var(--trunk-height, 0px) * 0.8);
+    width: 110px; height: 110px; z-index: 4;
+    transform: translateX(-100%) scale(var(--scale, 0));
+}
+.foliage-right {
+    bottom: calc(var(--trunk-height, 0px) * 0.7);
+    width: 100px; height: 100px; z-index: 3;
+    transform: translateX(0%) scale(var(--scale, 0));
+}
+.fruit {
+    position: absolute;
+    width: 20px; height: 20px;
+    background: #e53935;
+    border-radius: 50%;
+    box-shadow: inset 2px -2px 4px rgba(0,0,0,0.3);
+    opacity: var(--fruit-scale, 0);
+    transform: scale(var(--fruit-scale, 0));
+    transition: opacity 0.4s 1s, transform 0.4s 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.progress-bar-container {
+    width: 200px;
+    height: 18px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin-top: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #ffb300);
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}

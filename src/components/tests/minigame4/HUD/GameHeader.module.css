@@ -1,0 +1,64 @@
+/* File: src/features/minigames/SpaceRescue/components/HUD/GameHeader.module.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; /* Luôn nằm trên cùng */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); /* Gradient mờ dần */
+}
+
+/* --- LEFT --- */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.exitBtn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+.exitBtn:hover {
+  background: #ff5252;
+  border-color: #ff5252;
+  transform: rotate(90deg);
+}
+
+.levelBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #37474f;
+  padding: 2px 10px;
+  border-radius: 8px;
+  border: 2px solid #ffd54f;
+  box-shadow: 0 4px 0 #263238;
+}
+.lvlLabel { font-size: 8px; color: #ffd54f; font-weight: bold; }
+.lvlNum { font-size: 18px; color: #fff; font-weight: 900; line-height: 1; }
+
+/* --- CENTER --- */
+.centerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pilotLabel { font-size: 10px; color: #b0bec5; text-transform: uppercase; letter-spacing: 1px; }
+.pilotName { font-size: 18px; color: #fff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+/* --- RIGHT --- */
+.rightSection {
+  /* EnergyBar đã có style riêng */
+}

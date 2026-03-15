@@ -1,0 +1,69 @@
+.layerContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* QUAN TRỌNG: Để click xuyên qua lớp này */
+  z-index: 50; /* Nổi trên cùng */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* --- SUCCESS EFFECT (STAR BURST) --- */
+.burstWrapper {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.starParticle {
+  position: absolute;
+  font-size: 30px;
+  color: #ffeb3b;
+  opacity: 0;
+  /* Animation bay ra xa */
+  animation: flyOut 0.8s ease-out forwards;
+  text-shadow: 0 0 10px orange;
+}
+
+/* Định vị và hướng bay cho 8 tia */
+.p0 { --rot: 0deg; }
+.p1 { --rot: 45deg; }
+.p2 { --rot: 90deg; }
+.p3 { --rot: 135deg; }
+.p4 { --rot: 180deg; }
+.p5 { --rot: 225deg; }
+.p6 { --rot: 270deg; }
+.p7 { --rot: 315deg; }
+
+@keyframes flyOut {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--rot)) translate(0, 0) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    /* Bay ra xa 200px theo hướng xoay */
+    transform: rotate(var(--rot)) translate(200px, 0) scale(1.5); 
+  }
+}
+
+/* --- ERROR EFFECT (SHAKE) --- */
+.shakeOverlay {
+    width: 100%;
+    height: 100%;
+    /* Viền đỏ nháy lên */
+    box-shadow: inset 0 0 50px rgba(244, 67, 54, 0.5);
+    background: rgba(255, 0, 0, 0.1);
+    animation: shakeScreen 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shakeScreen {
+  10%, 90% { transform: translate3d(-5px, 0, 0); }
+  20%, 80% { transform: translate3d(5px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
+  40%, 60% { transform: translate3d(10px, 0, 0); }
+}

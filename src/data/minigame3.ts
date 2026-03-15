@@ -1,0 +1,35 @@
+import { type WordData } from '../types/minigame3';
+
+export const allWords: WordData[] = [
+    { full: "số ba", puzzle: "số b_", answer: "a", img: "so-ba.png" },
+    { full: "sao băng", puzzle: "sao b_ng", answer: "ă", img: "sao-bang.png" },
+    { full: "cái cân", puzzle: "cái c_n", answer: "â", img: "cai-can.png" },
+    { full: "con bò", puzzle: "con _ò", answer: "b", img: "con-bo.png" },
+    { full: "con cá", puzzle: "con _á", answer: "c", img: "con-ca.png" },
+    { full: "đôi dép", puzzle: "đôi _ép", answer: "d", img: "doi-dep.png" },
+    { full: "hoa đào", puzzle: "hoa _ào", answer: "đ", img: "hoa-dao.png" },
+    { full: "bánh xe", puzzle: "bánh x_", answer: "e", img: "banh-xe.png" },
+    { full: "con dê", puzzle: "con d_", answer: "ê", img: "con-de.png" },
+    { full: "con gà", puzzle: "con _à", answer: "g", img: "con-ga.png" },
+    { full: "con hổ", puzzle: "con _ổ", answer: "h", img: "con-ho.png" },
+    { full: "con voi", puzzle: "con vo_", answer: "i", img: "con-voi.png" },
+    { full: "cây kim", puzzle: "cây _im", answer: "k", img: "cay-kim.png" },
+    { full: "xanh lá", puzzle: "xanh _á", answer: "l", img: "xanh-la.png" },
+    { full: "con mèo", puzzle: "con _èo", answer: "m", img: "con-meo.png" },
+    { full: "quả nho", puzzle: "quả _ho", answer: "n", img: "qua-nho.png" },
+    { full: "con ong", puzzle: "con _ng", answer: "o", img: "con-ong.png" },
+    { full: "cái tô", puzzle: "cái t_", answer: "ô", img: "cai-to.png" },
+    { full: "giấc mơ", puzzle: "giấc m_", answer: "ơ", img: "giac-mo.png" },
+    { full: "xem phim", puzzle: "xem _him", answer: "p", img: "xem-phim.png" },
+    { full: "con quạ", puzzle: "con _uạ", answer: "q", img: "con-qua.png" },
+    { full: "con rồng", puzzle: "con _ồng", answer: "r", img: "con-rong.png" },
+    { full: "con sóc", puzzle: "con _óc", answer: "s", img: "con-soc.png" },
+    { full: "cái tủ", puzzle: "cái _ủ", answer: "t", img: "cai-tu.png" },
+    { full: "con cua", puzzle: "con c_a", answer: "u", img: "con-cua.png" },
+    { full: "con hươu", puzzle: "con h_ơu", answer: "ư", img: "con-huou.png" },
+    { full: "con voi", puzzle: "con _oi", answer: "v", img: "con-voi.png" },
+    { full: "xe hơi", puzzle: "_e hơi", answer: "x", img: "xe-hoi.png" },
+    { full: "yêu thương", puzzle: "_êu thương", answer: "y", img: "yeu-thuong.png" },
+];
+
+export const vietnameseAlphabet = "aăâbcdđeêghiklmnoôơpqrstuưvxy".split("");

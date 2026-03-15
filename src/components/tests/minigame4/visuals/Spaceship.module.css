@@ -1,0 +1,149 @@
+/* --- KHUNG BAO NGOÀI (Dùng để định vị & Animation bay) --- */
+.container {
+  position: relative;
+  width: 140px;
+  height: 80px;
+  /* Mặc định: Bay lơ lửng nhẹ nhàng */
+  animation: float 3s ease-in-out infinite;
+  transition: transform 1s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  z-index: 10; 
+}
+
+/* Khi kích hoạt BOOST: Tàu bay vút sang phải và biến mất */
+.boosting {
+  transform: translate(120vw, -50px) scale(0.8) skewX(-10deg);
+  animation: shake 0.2s infinite !important; /* Rung lắc mạnh do tốc độ cao */
+}
+
+/* --- THÂN TÀU --- */
+.body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #f0f4f8, #cfd9df); /* Màu bạc kim loại */
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* Hình dáng viên thuốc bầu dục */
+  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), 
+              5px 10px 20px rgba(0,0,0,0.2); /* Đổ bóng 3D */
+  z-index: 2;
+  overflow: hidden; /* Để cắt gọn các chi tiết thừa bên trong */
+}
+
+.window {
+  position: absolute;
+  top: 15px;
+  right: 30px; /* Cửa sổ nằm về phía đầu tàu */
+  width: 35px;
+  height: 35px;
+  background: #4fc3f7; /* Kính xanh dương */
+  border: 3px solid #37474f;
+  border-radius: 50%;
+  box-shadow: inset 3px 3px 5px rgba(255,255,255,0.4);
+}
+
+.reflection {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+}
+
+.stripe {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  width: 15px;
+  height: 100%;
+  background: #ff5252; /* Vạch đỏ trang trí */
+  transform: skewX(-15deg);
+  opacity: 0.8;
+}
+
+/* --- CÁNH TÀU (FINS) --- */
+.fin {
+  position: absolute;
+  background: #ff5252;
+  border: 2px solid #d32f2f;
+  z-index: 1; /* Nằm sau thân tàu */
+}
+
+.finTop {
+  top: -15px;
+  left: 20px;
+  width: 40px;
+  height: 30px;
+  border-radius: 80% 20% 0 0;
+  transform: skewX(-20deg);
+}
+
+.finBottom {
+  bottom: -15px;
+  left: 20px;
+  width: 40px;
+  height: 30px;
+  border-radius: 0 0 20% 80%;
+  transform: skewX(-20deg);
+}
+
+.finBack {
+  top: 25px;
+  left: -10px;
+  width: 20px;
+  height: 30px;
+  border-radius: 5px 0 0 5px;
+  background: #37474f; /* Động cơ đuôi màu tối */
+  border: none;
+}
+
+/* --- ĐỘNG CƠ & LỬA --- */
+.engineWrapper {
+  position: absolute;
+  top: 25px;
+  left: -40px; /* Đẩy ra sau đuôi tàu */
+  z-index: 0;
+}
+
+.flameMain {
+  width: 60px;
+  height: 30px;
+  background: linear-gradient(to left, transparent, orange, #ffeb3b);
+  border-radius: 50% 0 0 50%;
+  transform-origin: right center;
+  animation: flicker 0.1s infinite alternate; /* Lửa rung liên tục */
+}
+
+.flameCore {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  width: 40px;
+  height: 14px;
+  background: white; /* Lõi lửa nóng sáng trắng */
+  border-radius: 50% 0 0 50%;
+  opacity: 0.8;
+  animation: flicker 0.1s infinite alternate-reverse;
+}
+
+/* Khi Boosting: Lửa dài ra và đổi màu xanh */
+.boosting .flameMain {
+  width: 140px; 
+  background: linear-gradient(to left, transparent, #00e5ff, white);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes flicker {
+  0% { transform: scaleX(1); opacity: 0.9; }
+  100% { transform: scaleX(1.1); opacity: 1; }
+}
+
+@keyframes shake {
+  0% { transform: translate(120vw, -50px) translateY(2px); }
+  100% { transform: translate(120vw, -50px) translateY(-2px); }
+}

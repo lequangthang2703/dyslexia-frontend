@@ -1,0 +1,128 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "practice": "Practice",
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "home": {
+    "hero_title_1": "Read easier",
+    "hero_title_2": "with Dyslexia",
+    "hero_subtitle_1": "A reading support tool for everyone.",
+    "hero_subtitle_2": "Learn - play - discover with fun!",
+    "start_btn": "Start Now",
+    "benefits_title": "Why learning with DyslexiaBuddy is awesome?",
+    "benefit_1_title": "Start Early!",
+    "benefit_1_desc": "Early detection of reading difficulties helps provide timely and effective support.",
+    "benefit_2_title": "Just For You!",
+    "benefit_2_desc": "Personalized learning paths, suited to your unique learning style.",
+    "benefit_3_title": "Shine With Confidence!",
+    "benefit_3_desc": "Make progress every day, read aloud boldly, and be more confident in learning!"
+  },
+  "footer": {
+    "slogan": "Helping every child become a reading star!",
+    "links_title": "Links",
+    "about": "About Us",
+    "support": "Support",
+    "social_title": "Social Media",
+    "newsletter_title": "Newsletter",
+    "email_placeholder": "Your Email",
+    "join_btn": "JOIN",
+    "copyright": "Dyslexia Buddy · Created with ❤️ for children across Vietnam"
+  },
+  "auth": {
+    "login_title": "Login",
+    "register_title": "Register",
+    "name": "Name",
+    "name_placeholder": "Your Name",
+    "email": "Email",
+    "email_placeholder": "Your Email",
+    "password": "Password",
+    "password_placeholder": "Enter password",
+    "confirm_password": "Confirm Password",
+    "confirm_password_placeholder": "Confirm password",
+    "logging_in": "Logging in...",
+    "login_btn": "Login",
+    "register_btn": "Register",
+    "have_account": "Already have an account?",
+    "no_account": "Don't have an account?",
+    "create_account": "Create account",
+    "login_now": "Login",
+    "forgot_password": "Forgot password?",
+    "fill_all_fields": "Please fill in all fields.",
+    "fill_alert": "Please fill in both fields.",
+    "password_mismatch": "Passwords do not match.",
+    "reg_failed": "Registration failed",
+    "generic_reg_error": "An error occurred during registration."
+  },
+  "dashboard": {
+    "title": "My Tests",
+    "new_test_btn": "Start New Test",
+    "progress_title": "Test Progress",
+    "auditory_test": "Auditory Test",
+    "visual_test": "Visual Test",
+    "language_test": "Language Test",
+    "completed": "Completed",
+    "pending": "Pending",
+    "continue_prefix": "Continue with",
+    "all_completed": "🎉 All tests completed!",
+    "training_zone": "Training Zone",
+    "view_all": "View All",
+    "training_desc": "Practice with games to improve reading and listening skills!",
+    "game": "Game",
+    "coming_soon": "Coming soon",
+    "history_title": "Test History",
+    "no_sessions": "No test sessions found. Start your first test!",
+    "table": {
+      "date": "Date",
+      "time": "Time",
+      "status": "Status",
+      "score": "Score",
+      "result": "Result",
+      "action": "Action"
+    },
+    "status": {
+      "done": "Completed",
+      "doing": "In Progress",
+      "view_result": "View Result",
+      "continue": "Continue"
+    },
+    "results": {
+      "non_dyslexic": "No signs detected",
+      "maybe_dyslexic": "Possible signs",
+      "dyslexic": "Signs detected",
+      "waiting": "Waiting"
+    }
+  },
+  "training": {
+    "title": "🎮 Training Zone",
+    "subtitle": "Choose a game to practice reading and listening skills. The more you play, the better you'll get!",
+    "play_now": "Play Now! 🚀",
+    "coming_soon": "Coming Soon 🔒",
+    "badge_soon": "Soon",
+    "info_title": "💡 Why should you practice?",
+    "benefits": {
+      "brain_title": "Brain Training",
+      "brain_desc": "Games help the brain develop reading skills",
+      "focus_title": "Be More Focused",
+      "focus_desc": "Practice helps improve concentration",
+      "fun_title": "Fun Learning",
+      "fun_desc": "Learning through games helps kids love reading more"
+    },
+    "games": {
+      "game_1_name": "Game 1",
+      "game_1_desc": "Spelling Bee - Spelling",
+      "game_2_name": "Game 2",
+      "game_2_desc": "Reading Skill Practice",
+      "game_3_name": "Game 3",
+      "game_3_desc": "Magic Tree - Fill in letters",
+      "game_4_name": "Game 4",
+      "game_4_desc": "Space Rescue - Writing letters",
+      "game_5_name": "Game 5",
+      "game_5_desc": "Coming soon"
+    }
+  }
+}

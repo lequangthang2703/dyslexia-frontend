@@ -1,0 +1,161 @@
+.mascotContainer {
+  position: relative;
+  width: 100px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- MŨ (HELMET) --- */
+.helmet {
+  width: 90px;
+  height: 90px;
+  background: #fff;
+  border-radius: 50%;
+  border: 4px solid #e0e0e0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.visor {
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  width: 70px;
+  height: 60px;
+  background: #37474f; /* Kính tối màu */
+  border-radius: 40% 40% 50% 50% / 40% 40% 60% 60%;
+  overflow: hidden;
+  border: 3px solid #cfd8dc;
+}
+
+.reflection {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 15px;
+  height: 8px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: rotate(-20deg);
+}
+
+/* --- KHUÔN MẶT (FACE) --- */
+.face {
+  position: relative;
+  top: 15px;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.eye {
+  position: absolute;
+  top: 10px;
+  width: 8px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+}
+.eye.left { left: 20px; }
+.eye.right { right: 20px; }
+
+.mouth {
+  position: absolute;
+  top: 25px;
+  left: 28px;
+  width: 14px;
+  height: 6px;
+  background: transparent;
+  border-bottom: 2px solid #fff;
+  border-radius: 0 0 10px 10px; /* Cười nhẹ */
+}
+
+.blush {
+  position: absolute;
+  top: 18px;
+  width: 8px;
+  height: 4px;
+  background: #ff8a80;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.blush.left { left: 15px; }
+.blush.right { right: 15px; }
+
+.bodyTop {
+  width: 60px;
+  height: 20px;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  margin-top: -10px;
+  z-index: 1;
+  border: 2px solid #e0e0e0;
+}
+
+/* --- BIỂU CẢM (EMOTIONS) --- */
+
+/* 1. IDLE: Bình thường */
+.idle .eye {
+  animation: blink 4s infinite;
+}
+
+/* 2. HAPPY: Cười tít mắt */
+.happy .eye {
+  height: 4px;
+  border-radius: 0;
+  background: transparent;
+  border-top: 2px solid #fff; /* Mắt hình dấu ^ */
+  top: 12px;
+}
+.happy .mouth {
+  height: 10px;
+  border-bottom: 3px solid #fff; /* Cười to hơn */
+}
+.happy .blush { opacity: 1; } /* Hiện má hồng */
+
+/* 3. THINKING: Nhìn lên */
+.thinking .eye {
+  transform: translateY(-3px) translateX(2px); /* Nhìn lên góc */
+}
+.thinking .mouth {
+  width: 6px;
+  height: 6px;
+  border: 2px solid #fff;
+  border-radius: 50%; /* Miệng chữ O nhỏ */
+  left: 32px;
+}
+
+/* 4. WORRIED: Lo lắng */
+.worried .eye {
+    top: 12px;
+}
+.worried .mouth {
+    border-bottom: none;
+    border-top: 2px solid #fff; /* Miệng mếu */
+    top: 28px;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.questionMark {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 24px;
+    color: #fff;
+    font-weight: bold;
+    animation: floatUp 1s infinite alternate;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}

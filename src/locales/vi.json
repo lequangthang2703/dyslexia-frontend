@@ -1,0 +1,128 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Về chúng tôi",
+    "practice": "Luyện tập",
+    "dashboard": "Dashboard",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "register": "Đăng ký"
+  },
+  "home": {
+    "hero_title_1": "Đọc dễ dàng hơn",
+    "hero_title_2": "với Dyslexia",
+    "hero_subtitle_1": "Công cụ hỗ trợ đọc dành cho mọi người.",
+    "hero_subtitle_2": "Học - chơi - khám phá thật vui vẻ!",
+    "start_btn": "Bắt đầu ngay",
+    "benefits_title": "Vì sao học cùng DyslexiaBuddy thật tuyệt?",
+    "benefit_1_title": "Bắt đầu sớm!",
+    "benefit_1_desc": "Phát hiện khó khăn khi đọc sớm giúp hỗ trợ kịp thời và hiệu quả hơn.",
+    "benefit_2_title": "Chỉ dành riêng cho bạn!",
+    "benefit_2_desc": "Lộ trình học cá nhân hóa, phù hợp với từng bạn và phong cách học riêng biệt.",
+    "benefit_3_title": "Tự tin tỏa sáng!",
+    "benefit_3_desc": "Tiến bộ mỗi ngày, mạnh dạn đọc to và tự tin hơn trong học tập!"
+  },
+  "footer": {
+    "slogan": "Giúp mọi trẻ em đều trở thành ngôi sao đọc hiểu!",
+    "links_title": "Liên kết",
+    "about": "Giới thiệu",
+    "support": "Hỗ trợ",
+    "social_title": "Mạng xã hội",
+    "newsletter_title": "Nhận tin mới",
+    "email_placeholder": "Email của bạn",
+    "join_btn": "JOIN",
+    "copyright": "Dyslexia Buddy · Được tạo bằng ❤️ cho trẻ em ở khắp Việt Nam"
+  },
+  "auth": {
+    "login_title": "Đăng nhập",
+    "register_title": "Đăng ký",
+    "name": "Tên",
+    "name_placeholder": "Tên của bạn",
+    "email": "Email",
+    "email_placeholder": "Email của bạn",
+    "password": "Mật khẩu",
+    "password_placeholder": "Nhập mật khẩu",
+    "confirm_password": "Xác nhận mật khẩu",
+    "confirm_password_placeholder": "Xác nhận mật khẩu",
+    "logging_in": "Đang đăng nhập...",
+    "login_btn": "Đăng nhập",
+    "register_btn": "Đăng ký",
+    "have_account": "Bạn đã có tài khoản?",
+    "no_account": "Bạn chưa có tài khoản?",
+    "create_account": "Tạo tài khoản",
+    "login_now": "Đăng nhập",
+    "forgot_password": "Quên mật khẩu?",
+    "fill_all_fields": "Vui lòng điền đầy đủ thông tin.",
+    "fill_alert": "Vui lòng điền đầy đủ thông tin.",
+    "password_mismatch": "Mật khẩu xác nhận không khớp.",
+    "reg_failed": "Đăng ký thất bại",
+    "generic_reg_error": "Đã xảy ra lỗi trong quá trình đăng ký."
+  },
+  "dashboard": {
+    "title": "Bài test của tôi",
+    "new_test_btn": "Bắt đầu bài test mới",
+    "progress_title": "Tiến độ",
+    "auditory_test": "Bài test thính giác",
+    "visual_test": "Bài test thị giác",
+    "language_test": "Bài test ngôn ngữ",
+    "completed": "Hoàn thành",
+    "pending": "Đang chờ",
+    "continue_prefix": "Tiếp tục với bài test",
+    "all_completed": "🎉 Đã hoàn thành tất cả bài test!",
+    "training_zone": "Khu vực luyện tập",
+    "view_all": "Xem tất cả",
+    "training_desc": "Luyện tập với các trò chơi để cải thiện kỹ năng đọc và nghe!",
+    "game": "Trò chơi",
+    "coming_soon": "Sắp có",
+    "history_title": "Lịch sử bài test",
+    "no_sessions": "Không tìm thấy dữ liệu. Hãy bắt đầu bài test đầu tiên!",
+    "table": {
+      "date": "Ngày",
+      "time": "Giờ",
+      "status": "Trạng thái",
+      "score": "Điểm",
+      "result": "Kết quả",
+      "action": "Hành động"
+    },
+    "status": {
+      "done": "Hoàn thành",
+      "doing": "Đang làm",
+      "view_result": "Xem kết quả",
+      "continue": "Tiếp tục"
+    },
+    "results": {
+      "non_dyslexic": "Không có dấu hiệu",
+      "maybe_dyslexic": "Có thể có dấu hiệu",
+      "dyslexic": "Có dấu hiệu",
+      "waiting": "Đang chờ"
+    }
+  },
+  "training": {
+    "title": "🎮 Khu vực luyện tập",
+    "subtitle": "Chọn một trò chơi để luyện tập kỹ năng đọc và nghe. Càng chơi nhiều, con sẽ càng giỏi hơn!",
+    "play_now": "Chơi ngay! 🚀",
+    "coming_soon": "Sắp ra mắt 🔒",
+    "badge_soon": "Sắp có",
+    "info_title": "💡 Tại sao nên luyện tập?",
+    "benefits": {
+      "brain_title": "Rèn luyện não bộ",
+      "brain_desc": "Các trò chơi giúp não bộ phát triển kỹ năng đọc",
+      "focus_title": "Tập trung hơn",
+      "focus_desc": "Luyện tập giúp cải thiện khả năng tập trung",
+      "fun_title": "Vui vẻ học tập",
+      "fun_desc": "Học qua trò chơi giúp con yêu thích việc đọc hơn"
+    },
+    "games": {
+      "game_1_name": "Trò chơi 1",
+      "game_1_desc": "Spelling Bee - Ghép vần",
+      "game_2_name": "Trò chơi 2",
+      "game_2_desc": "Luyện tập kỹ năng đọc",
+      "game_3_name": "Trò chơi 3",
+      "game_3_desc": "Cây Thần Kỳ - Điền chữ cái",
+      "game_4_name": "Trò chơi 4",
+      "game_4_desc": "Cứu Hộ Vũ Trụ - Viết chữ cái",
+      "game_5_name": "Trò chơi 5",
+      "game_5_desc": "Sắp ra mắt"
+    }
+  }
+}

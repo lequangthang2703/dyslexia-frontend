@@ -1,0 +1,299 @@
+/* Main Layout */
+.game-wrapper {
+    background: #f0f8ff; /* Light sky blue background */
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden; /* Prevent layout shifts */
+}
+.game-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+/* Panels */
+.left-panel, .middle-panel, .right-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.left-panel { flex: 2; }
+.middle-panel { flex: 3; }
+.right-panel { flex: 1.5; align-items: center; }
+
+/* Score & Progress Display (Right Panel) */
+.progress-info {
+        background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 15px;
+}
+.word-counter {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Image & Puzzle (Left Panel) */
+.image-container {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+.image-container img {
+    max-width: 350px;
+    max-height: 320px;
+    width: 350px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.image-container p {
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4CAF50;
+    visibility: hidden;
+    height: 2rem;
+}
+.image-container.show-full-word p {
+    visibility: visible;
+}
+
+/* --- UPDATED PUZZLE STYLES --- */
+.puzzle-platform {
+    margin-top: 25px;
+    background: #e3f2fd;
+    padding: 20px 40px;
+    border-radius: 15px;
+    border: 2px dashed #90caf9;
+    font-size: 2.5rem;
+    /* Removed letter-spacing to fix the "touching letters" issue */
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows long words to wrap nicely */
+}
+
+.puzzle-char {
+    color: #333;
+    font-weight: bold;
+    margin: 0 1px; /* Adds space around normal letters like 'c', 'o', 'n' */
+}
+
+.puzzle-space {
+    display: inline-block;
+    width: 20px; /* Distinct separation for actual spaces between words */
+}
+
+.puzzle-blank {
+    display: inline-block;
+    width: 36px; /* Increased width for better visibility */
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    border-bottom: 4px solid #90caf9;
+    transition: all 0.3s ease;
+    
+    /* FIX FOR BOLD ISSUE: Set bold here so it's active immediately */
+    font-weight: bold; 
+    
+    /* FIX FOR SPACING ISSUE: Push neighbors away */
+    margin: 0 1px; 
+}
+
+.puzzle-blank.correct {
+    border-color: #4CAF50;
+    color: #4CAF50;
+    /* Font-weight is inherited from .puzzle-blank, no transition needed */
+}
+
+.puzzle-blank.incorrect {
+    border-color: #f44336;
+    color: #f44336;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+.back-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #b0bec5;
+    color: #37474f;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.back-btn:hover {
+    background-color: #90a4ae;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Keyboard (Middle Panel) */
+.keyboard-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    max-width: 500px;
+    margin-top: 20px;
+}
+.keyboard-button {
+    width: 65px;
+    height: 80px;
+    border: none;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: linear-gradient(145deg, #89cff0, #6aa2c1);
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    transform: rotate(5deg);
+}
+.keyboard-button:hover {
+    transform: translateY(-5px) rotate(0deg) scale(1.05);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+.keyboard-button:active {
+    transform: translateY(2px) rotate(7deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Controls */
+.controls-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+.control-btn {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+.sound-btn { background-color: #ffc107; color: white; }
+.next-btn { background-color: #4CAF50; color: white; }
+.next-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Overlay */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Hiệu ứng làm mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* Đảm bảo overlay nằm trên mọi thứ */
+    color: white;
+    text-align: center;
+    backdrop-filter: blur(5px); /* Hiệu ứng blur nhẹ */
+}
+
+.overlay-content {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 80%;
+    animation: fadeInScale 0.5s ease-out;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.overlay-content h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #4CAF50; /* Màu xanh lá cây nổi bật */
+}
+
+.overlay-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 1.1em;
+}
+
+.overlay-content li {
+    margin-bottom: 10px;
+}
+
+/* Nút Bắt Đầu */
+.start-btn {
+    padding: 15px 40px;
+    font-size: 1.5em;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    color: white;
+    cursor: pointer;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Đếm Ngược */
+.countdown-display {
+    font-size: 8em;
+    font-weight: bold;
+    color: #FFEB3B; /* Màu vàng nổi bật */
+    text-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}

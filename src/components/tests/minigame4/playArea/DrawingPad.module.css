@@ -1,0 +1,109 @@
+.padContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  /* Hiệu ứng nổi lên trên nền */
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: 4px solid #fff;
+}
+
+.canvasWrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px dashed #cfd8dc; /* Viền nét đứt gợi ý vùng viết */
+  background-color: #ffffff;
+  /* Pattern giấy ô ly mờ nhạt để bé dễ căn dòng (Optional) */
+  background-image: 
+    linear-gradient(#e0e0e0 1px, transparent 1px),
+    linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.canvas {
+  display: block;
+  cursor: crosshair;
+  /* QUAN TRỌNG: Ngăn browser xử lý chạm vuốt (scroll/zoom) để ưu tiên vẽ */
+  touch-action: none; 
+}
+
+/* Lớp phủ khi đang gửi dữ liệu */
+.processingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #546e7a;
+  font-weight: bold;
+  backdrop-filter: blur(2px);
+}
+
+/* --- THANH CÔNG CỤ --- */
+.toolsBar {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn {
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1); /* Nút nổi 3D */
+}
+
+.btn:active {
+  transform: translateY(4px); /* Hiệu ứng nhấn nút */
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+/* Nút Xóa: Màu xám đỏ nhẹ */
+.btnClear {
+  background-color: #eceff1;
+  color: #546e7a;
+  border: 2px solid #cfd8dc;
+}
+.btnClear:hover:not(:disabled) {
+  background-color: #ffcdd2;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+
+/* Nút Nộp bài: Màu xanh lá nổi bật */
+.btnSubmit {
+  background: linear-gradient(to bottom, #66bb6a, #43a047);
+  color: white;
+  flex-grow: 1; /* Nút này dài hơn nút xóa */
+  justify-content: center;
+}
+.btnSubmit:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #81c784, #4caf50);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+}

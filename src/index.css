@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+    --font-fredoka: 'Fredoka', 'Roboto', sans-serif;
+}
+
+@layer utilities {
+    .bg-gradient-pink {
+        @apply bg-gradient-to-br from-yellow-100 via-pink-50 to-purple-100;
+    }
+    .bg-gradient-cyan {
+        @apply bg-gradient-to-br from-yellow-100 via-pink-100 to-cyan-100;
+    }
+    .bg-gradient-pink-right {
+        @apply bg-gradient-to-r from-yellow-100 via-pink-100 to-purple-100;
+    }
+}
