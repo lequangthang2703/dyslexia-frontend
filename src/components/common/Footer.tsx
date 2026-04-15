@@ -47,9 +47,36 @@ const Footer = () => {
                         {t('footer.social_title')}
                     </h3>
                     <ul className="space-y-1">
-                        <li><a href="#" className="hover:underline transition">Instagram</a></li>
-                        <li><a href="#" className="hover:underline transition">LinkedIn</a></li>
-                        <li><a href="#" className="hover:underline transition">Twitter</a></li>
+                        <li>
+                            <a
+                                href="https://www.instagram.com/bachkhoa.hcmut/"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="hover:underline transition"
+                            >
+                                Instagram
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.linkedin.com/school/hcmut-bachkhoa/"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="hover:underline transition"
+                            >
+                                LinkedIn
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="https://www.facebook.com/truongdhbachkhoa/"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="hover:underline transition"
+                            >
+                                Facebook
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
