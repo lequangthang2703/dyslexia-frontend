@@ -1,4 +1,4 @@
-// This will be extracted from the existing AuditoryTest.tsx
+﻿// This will be extracted from the existing AuditoryTest.tsx
 // For now, we'll use the existing AuditoryTest component
 // TODO: Extract the question handling logic from AuditoryTest.tsx
 
@@ -14,17 +14,14 @@ import B_audio from "../../../assets/audioTestVowel/B.mp3";
 import M_audio from "../../../assets/audioTestVowel/M.mp3";
 import N_audio from "../../../assets/audioTestVowel/N.mp3";
 import D_audio from "../../../assets/audioTestVowel/D.mp3";
-import Đ_audio from "../../../assets/audioTestVowel/Đ.mp3";
+import DD_audio from "../../../assets/audioTestVowel/Đ.mp3";
 import ca_audio from "../../../assets/audioTestVowel/ca.mp3";
-import cá_audio from "../../../assets/audioTestVowel/cá.mp3";
-import cà_audio from "../../../assets/audioTestVowel/cà.mp3";
-import cả_audio from "../../../assets/audioTestVowel/cả.mp3";
+import ca_sac_audio from "../../../assets/audioTestVowel/cá.mp3";
+import ca_huyen_audio from "../../../assets/audioTestVowel/cà.mp3";
+import ca_hoi_audio from "../../../assets/audioTestVowel/cả.mp3";
 import khiAnChuoi_audio from "../../../assets/audioTestVowel/khiAnChuoi.mp3";
 import meoAnCa_audio from "../../../assets/audioTestVowel/meoAnCa.mp3";
 import choAnXuong_audio from "../../../assets/audioTestVowel/choAnXuong.mp3";
-import thichAnKem_vn_audio from "../../../assets/audioTestVowel/thichAnKem_vn.mp3";
-import thichAnKem_ko_audio from "../../../assets/audioTestVowel/thichAnKem_ko.mp3.mp3";
-import thichAnKem_en_audio from "../../../assets/audioTestVowel/thichAnKem_en.mp3";
 import buoiTruaAnBuoiChua_audio from "../../../assets/audioTestVowel/buoiTruaAnBuoiChua.mp3";
 import buoiTruaUongSuaChua_audio from "../../../assets/audioTestVowel/buoiTruaUongSuaChua.mp3";
 
@@ -96,7 +93,7 @@ const D_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
   },
   {
     questionText: "Chọn chữ cái đúng theo âm thanh:",
-    audios: [Đ_audio],
+    audios: [DD_audio],
     options: [{ text: "D" }, { text: "Đ" }],
     correctOptionIndex: 1,
   },
@@ -111,19 +108,19 @@ const D_QUESTION_BANK_2: AuditorySoundOptionChoiceQuestion[] = [
   },
   {
     questionText: "Chọn từ đúng theo âm thanh:",
-    audios: [cá_audio],
+    audios: [ca_sac_audio],
     options: [{ text: "ca" }, { text: "cá" }, { text: "cà" }, { text: "cả" }],
     correctOptionIndex: 1,
   },
   {
     questionText: "Chọn từ đúng theo âm thanh:",
-    audios: [cà_audio],
+    audios: [ca_huyen_audio],
     options: [{ text: "ca" }, { text: "cá" }, { text: "cà" }, { text: "cả" }],
     correctOptionIndex: 2,
   },
   {
     questionText: "Chọn từ đúng theo âm thanh:",
-    audios: [cả_audio],
+    audios: [ca_hoi_audio],
     options: [{ text: "ca" }, { text: "cá" }, { text: "cà" }, { text: "cả" }],
     correctOptionIndex: 3,
   },
@@ -162,26 +159,6 @@ const UF_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
   },
 ];
 
-const LC_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
-  {
-    questionText: "Đây có phải tiếng Việt không?",
-    audios: [thichAnKem_vn_audio],
-    options: [{ text: "Đúng" }, { text: "Sai" }],
-    correctOptionIndex: 0,
-  },
-  {
-    questionText: "Đây có phải tiếng Việt không?",
-    audios: [thichAnKem_ko_audio],
-    options: [{ text: "Đúng" }, { text: "Sai" }],
-    correctOptionIndex: 1,
-  },
-  {
-    questionText: "Đây có phải tiếng Việt không?",
-    audios: [thichAnKem_en_audio],
-    options: [{ text: "Đúng" }, { text: "Sai" }],
-    correctOptionIndex: 1,
-  },
-];
 
 const PAIAS_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
   {
@@ -204,23 +181,26 @@ const PAIAS_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
   },
 ];
 
-const QUESTIONS_INFO = [
-	{ module: "PHONOLOGICAL_AWARENESS/1", text: "Nhận thức âm vị" },
-	{ module: "PHONOLOGICAL_AWARENESS/2", text: "Nhận thức âm vị" },
-	{ module: "DECODING/1", text: "Nhận diện chữ & giải mã" },
-	{ module: "DECODING/2", text: "Nhận diện chữ & giải mã" },
-	{ module: "UNDERSTANDING_FLUENCY/1", text: "Tốc độ hiểu" },
-	{ module: "UNDERSTANDING_FLUENCY/2", text: "Tốc độ hiểu" },
-	{ module: "LANGUAGE_COMPREHENSION/1", text: "Hiểu và nhận dạng ngôn ngữ" },
-	{ module: "LANGUAGE_COMPREHENSION/2", text: "Hiểu và nhận dạng ngôn ngữ" },
-	{
-		module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/1",
-		text: "Nhận thức âm vị trong câu",
-	},
-	{
-		module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/2",
-		text: "Nhận thức âm vị trong câu",
-	},
+
+const AUDITORY_QUESTIONS_INFO = [
+  { module: "PHONOLOGICAL_AWARENESS/1", text: "Nhận thức âm vị" },
+  { module: "PHONOLOGICAL_AWARENESS/2", text: "Nhận thức âm vị" },
+  { module: "PHONOLOGICAL_AWARENESS/3", text: "Nhận thức âm vị" },
+  { module: "LETTER_SOUND_DECODING/1", text: "Liên kết âm và chữ" },
+  { module: "LETTER_SOUND_DECODING/2", text: "Liên kết âm và chữ" },
+  { module: "TONE_DISCRIMINATION/1", text: "Phân biệt dấu thanh" },
+  { module: "TONE_DISCRIMINATION/2", text: "Phân biệt dấu thanh" },
+  { module: "TONE_DISCRIMINATION/3", text: "Phân biệt dấu thanh" },
+  { module: "UNDERSTANDING_FLUENCY/1", text: "Nghe hiểu câu" },
+  { module: "UNDERSTANDING_FLUENCY/2", text: "Nghe hiểu câu" },
+  {
+    module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/1",
+    text: "Nhận thức âm vị trong câu",
+  },
+  {
+    module: "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/2",
+    text: "Nhận thức âm vị trong câu",
+  },
 ];
 
 type AuditoryAttempt = {
@@ -241,34 +221,32 @@ type AuditoryAttempt = {
 type AuditoryTestDetails = {
   questionCount: number;
   correctCount: number;
+  categorySummaries: {
+    module: string;
+    label: string;
+    totalQuestions: number;
+    correctAnswers: number;
+    score: number;
+  }[];
   attempts: AuditoryAttempt[];
 };
 
 
+const shuffleQuestions = (questions: AuditorySoundOptionChoiceQuestion[]) =>
+  [...questions].sort(() => 0.5 - Math.random());
+
 const getRandomQuestions = () => {
-  const pa_shuffled = PA_QUESTION_BANK.sort(() => 0.5 - Math.random());
-  const pa_questions = pa_shuffled.slice(0, 2);
+  const pa_questions = shuffleQuestions(PA_QUESTION_BANK).slice(0, 3);
+  const d_questions_1 = shuffleQuestions(D_QUESTION_BANK).slice(0, 2);
+  const d_questions_2 = shuffleQuestions(D_QUESTION_BANK_2).slice(0, 3);
+  const uf_questions = shuffleQuestions(UF_QUESTION_BANK).slice(0, 2);
+  const paias_questions = shuffleQuestions(PAIAS_QUESTION_BANK).slice(0, 2);
 
-  const d_shuffled_1 = D_QUESTION_BANK.sort(() => 0.5 - Math.random());
-  const d_questions_1 = d_shuffled_1.slice(0, 1);
-
-  const d_shuffled_2 = D_QUESTION_BANK_2.sort(() => 0.5 - Math.random());
-  const d_questions_2 = d_shuffled_2.slice(0, 1);
-  const d_questions = [...d_questions_1, ...d_questions_2];
-
-  const uf_shuffled = UF_QUESTION_BANK.sort(() => 0.5 - Math.random());
-  const uf_questions = uf_shuffled.slice(0, 2);
-
-  const lc_shuffled = LC_QUESTION_BANK.sort(() => 0.5 - Math.random());
-  const lc_questions = lc_shuffled.slice(0, 2);
-
-  const paias_shuffled = PAIAS_QUESTION_BANK.sort(() => 0.5 - Math.random());
-  const paias_questions = paias_shuffled.slice(0, 2);
   return [
     ...pa_questions,
-    ...d_questions,
+    ...d_questions_1,
+    ...d_questions_2,
     ...uf_questions,
-    ...lc_questions,
     ...paias_questions,
   ];
 };
@@ -291,7 +269,7 @@ const AuditoryTestPage = () => {
     telemetry: AuditoryAnswerTelemetry
   ) => {
     const question = questions[questionIndex];
-    const info = QUESTIONS_INFO[questionIndex];
+    const info = AUDITORY_QUESTIONS_INFO[questionIndex];
 
     const attempt: AuditoryAttempt = {
       questionIndex,
@@ -318,19 +296,48 @@ const AuditoryTestPage = () => {
 
   const saveAuditoryResult = () => {
     const correctCount = attempts.filter((attempt) => attempt.isCorrect).length;
-    const finalScore = (correctCount / QUESTIONS_INFO.length) * 100;
+    const finalScore = (correctCount / AUDITORY_QUESTIONS_INFO.length) * 100;
+    const categorySummaries = AUDITORY_QUESTIONS_INFO.reduce<
+      AuditoryTestDetails["categorySummaries"]
+    >((summaries, info) => {
+      const module = info.module.split("/")[0];
+      if (summaries.some((summary) => summary.module === module)) {
+        return summaries;
+      }
+
+      const moduleAttempts = attempts.filter((attempt) =>
+        attempt.module.startsWith(module)
+      );
+      const correctAnswers = moduleAttempts.filter(
+        (attempt) => attempt.isCorrect
+      ).length;
+
+      summaries.push({
+        module,
+        label: info.text,
+        totalQuestions: moduleAttempts.length,
+        correctAnswers,
+        score:
+          moduleAttempts.length > 0
+            ? Math.round((correctAnswers / moduleAttempts.length) * 100)
+            : 0,
+      });
+
+      return summaries;
+    }, []);
     const completedAt = new Date().toISOString();
 
     saveTestResult<AuditoryTestDetails>("auditory", {
       score: finalScore,
       rawScore: correctCount,
-      maxScore: QUESTIONS_INFO.length,
+      maxScore: AUDITORY_QUESTIONS_INFO.length,
       startedAt,
       completedAt,
       durationMs: new Date(completedAt).getTime() - new Date(startedAt).getTime(),
       details: {
-        questionCount: QUESTIONS_INFO.length,
+        questionCount: AUDITORY_QUESTIONS_INFO.length,
         correctCount,
+        categorySummaries,
         attempts,
       },
     });
@@ -338,7 +345,7 @@ const AuditoryTestPage = () => {
 
   const goToNextQuestion = () => {
     setShowFeedback(false);
-    if (currentQuestionIndex === QUESTIONS_INFO.length - 1) {
+    if (currentQuestionIndex === AUDITORY_QUESTIONS_INFO.length - 1) {
       saveAuditoryResult();
       // Last question, go to rating
       navigate("/test/auditory/rating");
@@ -371,19 +378,19 @@ const AuditoryTestPage = () => {
         {/* Progress */}
         <div className="w-full">
           <div className="text-pink-500 font-semibold mb-2 text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
-            {QUESTIONS_INFO[currentQuestionIndex].text} - Câu{" "}
-            {currentQuestionIndex + 1} / {QUESTIONS_INFO.length}
+            {AUDITORY_QUESTIONS_INFO[currentQuestionIndex].text} - Câu{" "}
+            {currentQuestionIndex + 1} / {AUDITORY_QUESTIONS_INFO.length}
           </div>
           <ProgressBar
             currentStep={currentQuestionIndex + 1}
-            totalSteps={QUESTIONS_INFO.length}
+            totalSteps={AUDITORY_QUESTIONS_INFO.length}
           />
         </div>
 
         {/* Score display */}
         <div className="text-center text-sm text-pink-600">
           <span className="font-semibold">
-            Điểm số: {score}/{QUESTIONS_INFO.length}
+            Điểm số: {score}/{AUDITORY_QUESTIONS_INFO.length}
           </span>
         </div>
 
@@ -397,7 +404,7 @@ const AuditoryTestPage = () => {
               onClick={goToNextQuestion}
               className="px-8 py-3 bg-pink-500 text-white rounded-xl font-semibold hover:bg-pink-600 transition text-lg"
             >
-              {currentQuestionIndex === QUESTIONS_INFO.length - 1
+              {currentQuestionIndex === AUDITORY_QUESTIONS_INFO.length - 1
                 ? "Hoàn thành"
                 : "Câu tiếp theo"}
             </button>

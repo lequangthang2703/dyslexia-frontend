@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTestProgress } from "../hooks/useTestProgress";
 import { testSessionService } from "../services/testSessionService";
+import { trainingGameConfigs } from "../config/trainingGames";
 import type { TestSession } from "../types/testSession";
 // 1. Import i18next
 import { useTranslation } from "react-i18next";
@@ -11,7 +12,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  // 2. Khởi tạo hàm t
+  // Initialize translation helper
   const { t } = useTranslation();
 
   const {
@@ -46,7 +47,7 @@ const Dashboard = () => {
     fetchSessions();
   }, [navigate]);
 
-  // 3. Sửa hàm getResultText để dùng đa ngôn ngữ
+  // Translate stored result codes for display
   const getResultText = (result: string | null) => {
     switch (result) {
       case "NON_DYSLEXIC":
@@ -74,8 +75,29 @@ const Dashboard = () => {
   };
 
   const getTestStatusIcon = (completed: boolean) => {
-    return completed ? "✅" : "⏳";
+    return completed ? "\u2713" : "\u23F3";
   };
+
+  const getNextTestLabel = (testType: string | null) => {
+    switch (testType) {
+      case "auditory":
+        return t("dashboard.auditory_test");
+      case "visual":
+        return t("dashboard.visual_test");
+      case "language":
+        return t("dashboard.language_test");
+      default:
+        return "";
+    }
+  };
+
+  const nextIncompleteTest = getNextIncompleteTest();
+
+  const dashboardTrainingGames = trainingGameConfigs.map((game) => ({
+    ...game,
+    name: t(game.nameKey),
+    description: t(game.descriptionKey),
+  }));
 
   const handleContinueSession = (session: TestSession) => {
     syncWithBackendSession(session);
@@ -124,16 +146,15 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {!isAllTestsComplete && (
+          {!isAllTestsComplete && nextIncompleteTest && (
             <div className="mt-4 text-center">
               <button
                 onClick={() => {
-                  const nextTest = getNextIncompleteTest();
-                  if (nextTest) navigate(`/test/${nextTest}/instruction`);
+                  navigate(`/test/${nextIncompleteTest}/instruction`);
                 }}
                 className="text-pink-600 hover:underline font-medium"
               >
-                {t('dashboard.continue_prefix')} {getNextIncompleteTest()} test →
+                {t('dashboard.continue_prefix')} {getNextTestLabel(nextIncompleteTest)} {"->"}
               </button>
             </div>
           )}
@@ -155,41 +176,42 @@ const Dashboard = () => {
               onClick={() => navigate("/training")}
               className="text-pink-600 hover:underline font-medium text-sm"
             >
-              {t('dashboard.view_all')} →
+              {t('dashboard.view_all')} {"->"}
             </button>
           </div>
           <p className="text-gray-600 text-sm mb-4">
             {t('dashboard.training_desc')}
           </p>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-            {[1, 2, 3, 4, 5].map((id) => {
-               const gameData = [
-                 { id: 1, icon: "🎮", available: true, path: "/test/minigame1/instruction" },
-                 { id: 2, icon: "📖", available: true, path: "/test/minigame2/instruction" },
-                 { id: 3, icon: "🧩", available: true, path: "/test/minigame3" },
-                 { id: 4, icon: "🎯", available: false },
-                 { id: 5, icon: "🌟", available: false },
-               ].find(g => g.id === id);
-               
-               return (
-                <button
-                  key={id}
-                  onClick={() => gameData?.available && gameData.path && navigate(gameData.path)}
-                  className={`flex flex-col items-center p-3 rounded-xl transition-all ${
-                    gameData?.available ? "bg-pink-100 hover:bg-pink-200 cursor-pointer" : "bg-gray-100 opacity-50 cursor-not-allowed"
-                  }`}
-                  disabled={!gameData?.available}
-                >
-                  <span className="text-2xl mb-1">{gameData?.icon}</span>
-                  <span className="text-xs font-medium text-gray-700 text-center">
-                    {t('dashboard.game')} {id}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {dashboardTrainingGames.map((game) => (
+              <button
+                key={game.id}
+                onClick={() => game.available && navigate(game.path)}
+                className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all ${
+                  game.available
+                    ? "bg-white hover:bg-pink-50 hover:border-pink-300 cursor-pointer"
+                    : "bg-gray-100 opacity-60 cursor-not-allowed"
+                }`}
+                disabled={!game.available}
+              >
+                <span className={`w-12 h-12 shrink-0 rounded-lg border flex items-center justify-center text-xl ${game.compactColor}`}>
+                  {game.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-bold text-gray-800">
+                    {game.name}
                   </span>
-                  {!gameData?.available && (
-                    <span className="text-[10px] text-gray-500">{t('dashboard.coming_soon')}</span>
+                  <span className="block text-xs text-gray-600 mt-1">
+                    {game.description}
+                  </span>
+                  {!game.available && (
+                    <span className="block text-[11px] text-gray-500 mt-1">
+                      {t('dashboard.coming_soon')}
+                    </span>
                   )}
-                </button>
-               );
-            })}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -202,10 +224,61 @@ const Dashboard = () => {
             {t('dashboard.no_sessions')}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div>
             <h3 className="text-lg font-semibold text-pink-600 mb-3">
               {t('dashboard.history_title')}
             </h3>
+            <div className="md:hidden space-y-3">
+              {sessions.map((session, idx) => (
+                <div
+                  key={session.id}
+                  className="rounded-lg border border-pink-100 bg-white p-4 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-bold text-pink-600">#{idx + 1}</div>
+                      <div className="mt-1 text-sm text-gray-600">
+                        {new Date(session.start_time).toLocaleDateString()}{" - "}
+                        {new Date(session.start_time).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                    </div>
+                    <span className={getResultColor(session.result)}>
+                      {getResultText(session.result)}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-600">
+                    <span>{t('dashboard.table.status')}</span>
+                    <span className="text-right font-medium">
+                      {session.completed
+                        ? t('dashboard.status.done')
+                        : t('dashboard.status.doing')}
+                    </span>
+                    <span>{t('dashboard.table.score')}</span>
+                    <span className="text-right font-medium">
+                      {session.total_score !== null
+                        ? `${session.total_score.toFixed(1)}/100`
+                        : "--"}
+                    </span>
+                  </div>
+                  <button
+                    className="mt-4 w-full rounded-lg border border-pink-200 px-3 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50"
+                    onClick={() =>
+                      session.completed
+                        ? navigate(`/results/${session.id}`)
+                        : handleContinueSession(session)
+                    }
+                  >
+                    {session.completed
+                      ? t('dashboard.status.view_result')
+                      : t('dashboard.status.continue')}
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full border-collapse">
               <thead>
                 <tr className="bg-pink-50">
@@ -226,9 +299,9 @@ const Dashboard = () => {
                     <td className="py-2 px-4">{new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                     <td className="py-2 px-4">
                       {session.completed ? (
-                        <span className="text-green-600">✅ {t('dashboard.status.done')}</span>
+                        <span className="text-green-600">{"\u2713"} {t('dashboard.status.done')}</span>
                       ) : (
-                        <span className="text-yellow-600">⏳ {t('dashboard.status.doing')}</span>
+                        <span className="text-yellow-600">{"\u23F3"} {t('dashboard.status.doing')}</span>
                       )}
                     </td>
                     <td className="py-2 px-4">{session.total_score !== null ? `${session.total_score.toFixed(1)}/100` : "--"}</td>
@@ -256,6 +329,7 @@ const Dashboard = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

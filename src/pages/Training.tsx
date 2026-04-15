@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { trainingGameConfigs } from "../config/trainingGames";
 // 1. Import i18next
 import { useTranslation } from "react-i18next";
 
@@ -20,53 +21,15 @@ const Training = () => {
   const { t } = useTranslation();
 
   // Build the minigame list with translated names and descriptions
-  const minigames: Minigame[] = [
-    {
-      id: 1,
-      name: t("training.games.game_1_name"),
-      description: t("training.games.game_1_desc"),
-      icon: "🐝",
-      path: "/test/minigame1/instruction",
-      color: "from-emerald-400 to-sky-500",
-      available: true,
-    },
-    {
-      id: 2,
-      name: t("training.games.game_2_name"),
-      description: t("training.games.game_2_desc"),
-      icon: "🚚",
-      path: "/test/minigame2/instruction",
-      color: "from-sky-400 to-emerald-500",
-      available: true,
-    },
-    {
-      id: 3,
-      name: t("training.games.game_3_name"),
-      description: t("training.games.game_3_desc"),
-      icon: "🌳",
-      path: "/test/minigame3",
-      color: "from-green-400 to-green-500",
-      available: true,
-    },
-    {
-      id: 4,
-      name: t("training.games.game_4_name"),
-      description: t("training.games.game_4_desc"),
-      icon: "☄️",
-      path: "/test/minigame4/instruction",
-      color: "from-sky-500 to-indigo-500",
-      available: true,
-    },
-    {
-      id: 5,
-      name: t("training.games.game_5_name"),
-      description: t("training.games.game_5_desc"),
-      icon: "🌟",
-      path: "/training/minigame5/instruction",
-      color: "from-purple-400 to-purple-500",
-      available: false,
-    },
-  ];
+  const minigames: Minigame[] = trainingGameConfigs.map((game) => ({
+    id: game.id,
+    name: t(game.nameKey),
+    description: t(game.descriptionKey),
+    icon: game.icon,
+    path: game.path,
+    color: game.color,
+    available: game.available,
+  }));
 
   const handlePlayGame = (game: Minigame) => {
     if (!game.available) return;
@@ -154,21 +117,21 @@ const Training = () => {
           </h2>
           <div className="grid md:grid-cols-3 gap-6 text-left">
             <div className="text-center">
-              <span className="text-4xl mb-2 block">🧠</span>
+              <span className="text-4xl mb-2 block">{"\uD83E\uDDE0"}</span>
               <h4 className="font-bold text-pink-600 mb-1">{t("training.benefits.brain_title")}</h4>
               <p className="text-gray-600 text-sm">
                 {t("training.benefits.brain_desc")}
               </p>
             </div>
             <div className="text-center">
-              <span className="text-4xl mb-2 block">🎯</span>
+              <span className="text-4xl mb-2 block">{"\uD83C\uDFAF"}</span>
               <h4 className="font-bold text-pink-600 mb-1">{t("training.benefits.focus_title")}</h4>
               <p className="text-gray-600 text-sm">
                 {t("training.benefits.focus_desc")}
               </p>
             </div>
             <div className="text-center">
-              <span className="text-4xl mb-2 block">😊</span>
+              <span className="text-4xl mb-2 block">{"\uD83D\uDE0A"}</span>
               <h4 className="font-bold text-pink-600 mb-1">{t("training.benefits.fun_title")}</h4>
               <p className="text-gray-600 text-sm">
                 {t("training.benefits.fun_desc")}

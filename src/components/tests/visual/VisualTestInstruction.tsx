@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+﻿import type { FormEvent } from "react";
 
 interface VisualTestInstructionProps {
   onStartTest: () => void;
@@ -17,11 +17,11 @@ const VisualTestInstruction = ({ onStartTest }: VisualTestInstructionProps) => {
         onSubmit={handleSubmit}
       >
         <h2 className="text-3xl text-pink-600 font-bold text-center mb-1 drop-shadow font-[Comic Sans MS,cursive,sans-serif]">
-          Visual Test Instruction
+          Bai Test Thi Giac Chu
         </h2>
 
         <div className="text-pink-500 font-semibold mb-2 text-center text-lg font-[Comic Sans MS,cursive,sans-serif]">
-          Step 3 of 4: <span className="text-gray-700 font-normal">Visual features</span>
+          Buoc 3/4: <span className="text-gray-700 font-normal">Phan biet chu va tu</span>
         </div>
         <div className="w-full h-2 bg-pink-100 rounded-full mb-4">
           <div className="bg-pink-400 h-2 rounded-full transition-all" style={{ width: "75%" }} />
@@ -49,22 +49,19 @@ const VisualTestInstruction = ({ onStartTest }: VisualTestInstructionProps) => {
           </div>
 
           <div className="font-bold text-black text-center mb-2 mt-2 font-[Comic Sans MS,cursive,sans-serif]">
-            Read carefully to the instructions.
+            Bai test co 12 cau ngan, moi cau chi chon mot lan.
           </div>
           <div className="text-center mb-2 text-gray-700 font-[Comic Sans MS,cursive,sans-serif]">
-            You will play a series of memory games using images. Your goal is to
-            find and match the images.
+            Em se phan biet chu de nham, tim chu trong day nhieu, chon tu giong
+            mau va ghi nho chuoi chu ngan.
           </div>
 
           <div className="mb-1 text-black font-bold text-center uppercase font-[Comic Sans MS,cursive,sans-serif]">
-            Instructions
+            Huong dan
           </div>
           <div className="text-center text-gray-700 text-sm leading-relaxed px-2 font-[Comic Sans MS,cursive,sans-serif]">
-            First, you'll see a <strong>target visual cue for 3 seconds</strong>
-            —memorize it. Next, click on the target among several images{" "}
-            <strong>as many times as you can in 15 seconds</strong>. The positions
-            will shuffle after each click. Each stage has two rounds with
-            increasing number of images. Good luck!
+            Hay nhin ky mau hoac bang chu roi chon dap an dung nhat.
+            Voi cau ghi nho, mau se bien mat truoc khi em chon dap an.
           </div>
         </div>
 
@@ -72,7 +69,7 @@ const VisualTestInstruction = ({ onStartTest }: VisualTestInstructionProps) => {
           type="submit"
           className="bg-pink-500 py-3 w-full rounded-lg text-white font-semibold hover:bg-pink-600 transition-all transform hover:scale-105 font-[Comic Sans MS,cursive,sans-serif]"
         >
-          Start Visual Test
+          Bat dau bai test
         </button>
       </form>
     </div>

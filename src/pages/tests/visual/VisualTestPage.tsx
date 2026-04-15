@@ -1,7 +1,7 @@
-import VisualTest from "../../../components/tests/visual/VisualTest";
+import VietnameseVisualTest from "../../../components/tests/visual/VietnameseVisualTest";
 
 const VisualTestPage = () => {
-  return <VisualTest />;
+  return <VietnameseVisualTest />;
 };
 
 export default VisualTestPage;
