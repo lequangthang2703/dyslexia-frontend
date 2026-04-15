@@ -5,6 +5,7 @@ import TestDifficultyRating from "../../../components/tests/shared/TestDifficult
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
 import type { TestSession } from "../../../types/testSession";
+import { getTestResult } from "../../../utils/testResultStorage";
 
 const AuditoryTestRatingPage = () => {
   const navigate = useNavigate();
@@ -52,15 +53,27 @@ const AuditoryTestRatingPage = () => {
         throw new Error("Could not get or create test session");
       }
 
-      // Calculate score (you may want to store actual score from test)
-      const score = progress.auditory.score || 80; // Default or from context
+      const savedResult = getTestResult<Record<string, unknown>>("auditory");
+      if (!savedResult) {
+        toastError("Không tìm thấy dữ liệu bài test. Vui lòng làm lại bài test.");
+        navigate("/test/auditory/instruction");
+        return;
+      }
+
+      const score = savedResult.score;
 
       // Submit test results to backend
       await testSessionService.submitTestSection(testSessionId, {
         score,
         test_details: {
+          ...savedResult.details,
+          rawScore: savedResult.rawScore,
+          maxScore: savedResult.maxScore,
+          startedAt: savedResult.startedAt,
+          completedAt: savedResult.completedAt,
+          durationMs: savedResult.durationMs,
           difficultyRating: rating,
-          completedAt: new Date().toISOString(),
+          ratingSubmittedAt: new Date().toISOString(),
         },
         test_type: "AUDITORY",
       });

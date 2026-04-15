@@ -16,27 +16,27 @@ interface Minigame {
 const Training = () => {
   const navigate = useNavigate();
   const { isAuthenticated, hasSelectedProfile } = useAuth();
-  // 2. Khởi tạo hàm t
+  // Initialize translation helper
   const { t } = useTranslation();
 
-  // 3. Đưa danh sách game vào đây để dùng t() cho đa ngôn ngữ
+  // Build the minigame list with translated names and descriptions
   const minigames: Minigame[] = [
     {
       id: 1,
       name: t("training.games.game_1_name"),
       description: t("training.games.game_1_desc"),
-      icon: "🤖",
+      icon: "🐝",
       path: "/test/minigame1/instruction",
-      color: "from-rose-400 to-rose-500",
+      color: "from-emerald-400 to-sky-500",
       available: true,
     },
     {
       id: 2,
       name: t("training.games.game_2_name"),
       description: t("training.games.game_2_desc"),
-      icon: "📖",
+      icon: "🚚",
       path: "/test/minigame2/instruction",
-      color: "from-pink-400 to-pink-500",
+      color: "from-sky-400 to-emerald-500",
       available: true,
     },
     {
@@ -52,9 +52,9 @@ const Training = () => {
       id: 4,
       name: t("training.games.game_4_name"),
       description: t("training.games.game_4_desc"),
-      icon: "🚀",
+      icon: "☄️",
       path: "/test/minigame4/instruction",
-      color: "from-indigo-400 to-purple-500",
+      color: "from-sky-500 to-indigo-500",
       available: true,
     },
     {

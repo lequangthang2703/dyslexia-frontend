@@ -1,7 +1,7 @@
-import MiniGame4Instruction from "../../../components/tests/minigame4/MiniGame4Instruction";
+import LetterMeteorInstruction from "../../../components/tests/minigame4/LetterMeteorInstruction";
 
 const MiniGame4InstructionPage = () => {
-  return <MiniGame4Instruction />;
+  return <LetterMeteorInstruction />;
 };
 
 export default MiniGame4InstructionPage;

@@ -1,40 +1,49 @@
-const LanguageTestInstruction = ({ onStartTest }: { onStartTest: () => void }) => (
+const LanguageTestInstruction = ({
+  onStartTest,
+}: {
+  onStartTest: () => void;
+}) => (
   <form
-    className="flex flex-col bg-white border border-gray-100 p-8 rounded-2xl items-center space-y-4 shadow-lg max-w-md w-full mx-auto mt-10"
-    onSubmit={e => { e.preventDefault(); onStartTest(); }}
+    className="flex flex-col bg-white/90 border-4 border-pink-200 p-8 rounded-2xl items-center space-y-5 shadow-lg max-w-lg w-full mx-auto mt-10"
+    onSubmit={(event) => {
+      event.preventDefault();
+      onStartTest();
+    }}
   >
     <h2 className="text-2xl text-pink-600 font-bold text-center mb-1">
-      Language Test Instruction
+      Bài Test Ngôn Ngữ Tiếng Việt
     </h2>
+
     <div className="text-pink-600 font-medium mb-2 text-center text-lg">
-      Step 4 of 4: <span className="text-gray-700 font-normal">Language features</span>
+      Bước 4/4: <span className="text-gray-700 font-normal">Âm, dấu, vần và từ</span>
     </div>
-    <div className="w-full h-1.5 bg-pink-100 rounded-full mb-4">
-      <div className="bg-pink-400 h-1.5 rounded-full transition-all" style={{ width: "100%" }} />
+
+    <div className="w-full h-2 bg-pink-100 rounded-full mb-2">
+      <div
+        className="bg-pink-400 h-2 rounded-full transition-all"
+        style={{ width: "100%" }}
+      />
     </div>
-    <div className="flex flex-col items-center">
-      {/* ABC Icon */}
-      <div className="my-2">
-        <span className="inline-block bg-pink-50 rounded-full p-3">
-          {/* ABC SVG */}
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="18" fill="#111" />
-            <text x="8" y="28" fill="white" fontSize="16" fontWeight="bold" fontFamily="Arial">abc</text>
-          </svg>
-        </span>
-      </div>
-      <div className="font-bold text-black text-center mt-2 mb-2">
-        Read carefully to the instructions.
-      </div>
-      <div className="text-center mb-2 text-gray-700">
-        You will play a series of memory games with language. The instruction will appear with the question, so remember to read it carefully.
-      </div>
+
+    <div className="text-gray-700 text-center space-y-3">
+      <p className="font-semibold text-gray-900">
+        Bài test có 12 câu ngắn, mỗi câu chỉ chọn một lần.
+      </p>
+      <p>
+        Em sẽ nghe tiếng Việt, phân biệt dấu thanh, ghép âm với vần và chọn từ
+        viết đúng. Hãy nghe kỹ trước khi chọn đáp án.
+      </p>
+      <p className="text-sm text-gray-600">
+        Với câu có âm thanh, em có thể bấm nghe lại. Số lần nghe lại và thời
+        gian trả lời sẽ được ghi nhận để đánh giá chính xác hơn.
+      </p>
     </div>
+
     <button
       type="submit"
-      className="bg-pink-500 py-2 w-full rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 focus:outline-none"
+      className="bg-pink-500 py-3 w-full rounded-lg text-white font-semibold hover:bg-pink-600 transition focus:ring-2 focus:ring-pink-200 focus:outline-none"
     >
-      Start Language Test
+      Bắt đầu bài test
     </button>
   </form>
 );

@@ -5,6 +5,7 @@ import TestDifficultyRating from "../../../components/tests/shared/TestDifficult
 import { toastSuccess, toastInfo, toastError } from "../../../utils/toast";
 import { testSessionService } from "../../../services/testSessionService";
 import type { TestSession } from "../../../types/testSession";
+import { getTestResult } from "../../../utils/testResultStorage";
 
 const VisualTestRatingPage = () => {
   const navigate = useNavigate();
@@ -52,13 +53,26 @@ const VisualTestRatingPage = () => {
         throw new Error("Could not get or create test session");
       }
 
-      const score = progress.visual.score || 80;
+      const savedResult = getTestResult<Record<string, unknown>>("visual");
+      if (!savedResult) {
+        toastError("Không tìm thấy dữ liệu bài test. Vui lòng làm lại bài test.");
+        navigate("/test/visual/instruction");
+        return;
+      }
+
+      const score = savedResult.score;
 
       await testSessionService.submitTestSection(testSessionId, {
         score,
         test_details: {
+          ...savedResult.details,
+          rawScore: savedResult.rawScore,
+          maxScore: savedResult.maxScore,
+          startedAt: savedResult.startedAt,
+          completedAt: savedResult.completedAt,
+          durationMs: savedResult.durationMs,
           difficultyRating: rating,
-          completedAt: new Date().toISOString(),
+          ratingSubmittedAt: new Date().toISOString(),
         },
         test_type: "VISUAL",
       });

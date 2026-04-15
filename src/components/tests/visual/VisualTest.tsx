@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTestStep } from "../../../contexts/TestStepContext";
 
 import { ChevronIcon, ZIcon, RectangleIcon, FaceIcon } from "./icons";
 import { ClockFace, TestStats } from "../shared/ClockAndStats";
 import type { Direction, Variant, RectangleVariant } from "./icons";
+import { saveTestResult } from "../../../utils/testResultStorage";
 
 /* ---------------- TYPES & LOGIC HELPERS ---------------- */
 
@@ -15,6 +16,24 @@ export type CardType = {
   rectangleVariant?: RectangleVariant;
   isTarget?: boolean;
   found?: boolean;
+};
+
+type VisualRoundResult = {
+  round: number;
+  targetType: CardType["type"];
+  target: CardType;
+  targetHits: number;
+  completedSets: number;
+  wrongClicks: number;
+  durationMs: number;
+};
+
+type VisualTestDetails = {
+  rounds: VisualRoundResult[];
+  totalTargetHits: number;
+  totalWrongClicks: number;
+  accuracy: number;
+  productivity: number;
 };
 
 const makeChevron = (
@@ -166,6 +185,15 @@ const VisualTest = () => {
   const [feedback, setFeedback] = useState<{ wrongId: number | null }>({
     wrongId: null,
   });
+  const testStartedAtRef = useRef(new Date().toISOString());
+  const roundStartedAtRef = useRef(Date.now());
+  const roundTargetHitsRef = useRef(0);
+  const roundCompletedSetsRef = useRef(0);
+  const roundWrongClicksRef = useRef(0);
+  const totalTargetHitsRef = useRef(0);
+  const totalWrongClicksRef = useRef(0);
+  const roundsRef = useRef<VisualRoundResult[]>([]);
+  const savedResultRef = useRef(false);
 
   // get current round number (1..8)
   const getCurrentRound = () =>
@@ -173,6 +201,57 @@ const VisualTest = () => {
   const round = getCurrentRound();
   const isOddRound = round % 2 === 1;
   const totalTargetsInRound = isOddRound ? 1 : 2;
+
+  const recordRoundResult = () => {
+    if (!targetCard) return;
+
+    const result: VisualRoundResult = {
+      round,
+      targetType: targetCard.type,
+      target: targetCard,
+      targetHits: roundTargetHitsRef.current,
+      completedSets: roundCompletedSetsRef.current,
+      wrongClicks: roundWrongClicksRef.current,
+      durationMs: Date.now() - roundStartedAtRef.current,
+    };
+
+    roundsRef.current = [
+      ...roundsRef.current.filter((item) => item.round !== round),
+      result,
+    ].sort((a, b) => a.round - b.round);
+  };
+
+  const saveVisualResult = () => {
+    if (savedResultRef.current) return;
+    savedResultRef.current = true;
+
+    const completedAt = new Date().toISOString();
+    const totalTargetHits = totalTargetHitsRef.current;
+    const totalWrongClicks = totalWrongClicksRef.current;
+    const totalClicks = totalTargetHits + totalWrongClicks;
+    const accuracy = totalClicks > 0 ? totalTargetHits / totalClicks : 0;
+    const expectedTargetHits = 24;
+    const productivity = Math.min(1, totalTargetHits / expectedTargetHits);
+    const finalScore = (accuracy * 0.7 + productivity * 0.3) * 100;
+
+    saveTestResult<VisualTestDetails>("visual", {
+      score: finalScore,
+      rawScore: totalTargetHits,
+      maxScore: expectedTargetHits,
+      startedAt: testStartedAtRef.current,
+      completedAt,
+      durationMs:
+        new Date(completedAt).getTime() -
+        new Date(testStartedAtRef.current).getTime(),
+      details: {
+        rounds: roundsRef.current,
+        totalTargetHits,
+        totalWrongClicks,
+        accuracy,
+        productivity,
+      },
+    });
+  };
 
   const goToNextStep = () => {
     // Sử dụng contextGoToNextStep thay vì logic điều hướng cục bộ
@@ -185,6 +264,9 @@ const VisualTest = () => {
     setCorrectCount(0);
     setWrongCount(0);
     setFeedback({ wrongId: null });
+    roundTargetHitsRef.current = 0;
+    roundCompletedSetsRef.current = 0;
+    roundWrongClicksRef.current = 0;
 
     const { target, cards: built } = buildCards(round);
     setTargetCard(target);
@@ -212,6 +294,7 @@ const VisualTest = () => {
     if (timeLeft > 0) {
       t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
     } else {
+      roundStartedAtRef.current = Date.now();
       setTestActive(true);
       setTestTimeFloat(15); // Đảm bảo timer bắt đầu từ 15
     }
@@ -236,6 +319,10 @@ const VisualTest = () => {
         if (newTimeFloat <= 0) {
           setTestTimeFloat(0);
           clearInterval(intervalId);
+          recordRoundResult();
+          if (round === 8) {
+            saveVisualResult();
+          }
           goToNextStep();
           return;
         }
@@ -254,9 +341,14 @@ const VisualTest = () => {
     if (isOddRound) {
       // Logic cũ cho vòng lẻ
       if (card.isTarget) {
+        roundTargetHitsRef.current += 1;
+        totalTargetHitsRef.current += 1;
+        roundCompletedSetsRef.current += 1;
         setScore((s) => s + 1);
         setCorrectCount((c) => c + 1);
       } else {
+        roundWrongClicksRef.current += 1;
+        totalWrongClicksRef.current += 1;
         setWrongCount((w) => w + 1);
       }
       setCards((prev) => shuffle(prev));
@@ -267,6 +359,8 @@ const VisualTest = () => {
     if (card.isTarget) {
       if (card.found) return;
 
+      roundTargetHitsRef.current += 1;
+      totalTargetHitsRef.current += 1;
       setScore((s) => s + 1);
 
       setCards((prevCards) => {
@@ -280,6 +374,7 @@ const VisualTest = () => {
 
         if (totalTargetsFound >= totalTargetsInRound) {
           // Nếu tìm thấy hết (2 target): Xáo trộn và reset 'found'
+          roundCompletedSetsRef.current += 1;
           setCorrectCount((c) => c + 1); // Cập nhật tổng số lần đúng
           return shuffle(newCards.map((c) => ({ ...c, found: false })));
         }
@@ -288,6 +383,8 @@ const VisualTest = () => {
       });
     } else {
       // Chọn sai
+      roundWrongClicksRef.current += 1;
+      totalWrongClicksRef.current += 1;
       setWrongCount((w) => w + 1);
       setFeedback({ wrongId: card.id });
     }

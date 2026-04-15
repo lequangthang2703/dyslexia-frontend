@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveTestResult } from "../../../utils/testResultStorage";
 
 // Shuffle helper
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -37,6 +38,27 @@ type ReplaceTest = {
 };
 
 type Test = LetterTest | RemoveTest | AddTest | ReplaceTest;
+
+type LanguageAttempt = {
+  questionId: string;
+  testIndex: number;
+  questionIndex: number;
+  testTitle: string;
+  questionType: Test["type"];
+  prompt: string;
+  expectedAnswer: string;
+  submittedAnswer: string;
+  isCorrect: boolean;
+  attemptNumber: number;
+  reactionTimeMs: number;
+  answeredAt: string;
+};
+
+type LanguageTestDetails = {
+  totalQuestions: number;
+  firstAttemptCorrect: number;
+  attempts: LanguageAttempt[];
+};
 
 const LanguageTest: React.FC = () => {
   const navigate = useNavigate();
@@ -104,6 +126,9 @@ const LanguageTest: React.FC = () => {
   const [showTransition, setShowTransition] = useState(false);
   const [inputLetter, setInputLetter] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const startedAtRef = useRef(new Date().toISOString());
+  const questionStartedAtRef = useRef(Date.now());
+  const attemptsRef = useRef<LanguageAttempt[]>([]);
 
   const currentTest = tests[testIndex] as Test;
   const currentQuestion =
@@ -116,6 +141,73 @@ const LanguageTest: React.FC = () => {
   const correctAnswer =
     currentTest.type === "letters" ? shuffledQuestions[currentIndex] : null;
 
+  const getTotalQuestionCount = () =>
+    tests.reduce((total, test) => total + test.questions.length, 0);
+
+  const getQuestionId = () => `language-${testIndex + 1}-${currentIndex + 1}`;
+
+  const recordAttempt = (
+    submittedAnswer: string,
+    expectedAnswer: string,
+    isCorrect: boolean,
+    prompt: string
+  ) => {
+    const questionId = getQuestionId();
+    const attemptNumber =
+      attemptsRef.current.filter((attempt) => attempt.questionId === questionId)
+        .length + 1;
+
+    attemptsRef.current = [
+      ...attemptsRef.current,
+      {
+        questionId,
+        testIndex,
+        questionIndex: currentIndex,
+        testTitle: currentTest.title,
+        questionType: currentTest.type,
+        prompt,
+        expectedAnswer,
+        submittedAnswer,
+        isCorrect,
+        attemptNumber,
+        reactionTimeMs: Date.now() - questionStartedAtRef.current,
+        answeredAt: new Date().toISOString(),
+      },
+    ];
+  };
+
+  const saveLanguageResult = () => {
+    const totalQuestions = getTotalQuestionCount();
+    const firstAttempts = new Map<string, LanguageAttempt>();
+
+    attemptsRef.current.forEach((attempt) => {
+      if (!firstAttempts.has(attempt.questionId)) {
+        firstAttempts.set(attempt.questionId, attempt);
+      }
+    });
+
+    const firstAttemptCorrect = Array.from(firstAttempts.values()).filter(
+      (attempt) => attempt.isCorrect
+    ).length;
+    const completedAt = new Date().toISOString();
+
+    saveTestResult<LanguageTestDetails>("language", {
+      score: (firstAttemptCorrect / totalQuestions) * 100,
+      rawScore: firstAttemptCorrect,
+      maxScore: totalQuestions,
+      startedAt: startedAtRef.current,
+      completedAt,
+      durationMs:
+        new Date(completedAt).getTime() -
+        new Date(startedAtRef.current).getTime(),
+      details: {
+        totalQuestions,
+        firstAttemptCorrect,
+        attempts: attemptsRef.current,
+      },
+    });
+  };
+
   // Shuffle questions when switching test
   useEffect(() => {
     if (currentTest.type === "letters") {
@@ -126,12 +218,22 @@ const LanguageTest: React.FC = () => {
     setSelectedIndex(null);
   }, [testIndex]);
 
+  useEffect(() => {
+    questionStartedAtRef.current = Date.now();
+  }, [testIndex, currentIndex]);
+
   // Load voices
   useEffect(() => {
     const loadVoices = () => setVoices(speechSynthesis.getVoices());
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
+
+  useEffect(() => {
+    if (!finished) return;
+    saveLanguageResult();
+    navigate("/test/language/rating");
+  }, [finished, navigate]);
 
   // Play any text
   const speakText = (text: string) => {
@@ -150,7 +252,12 @@ const LanguageTest: React.FC = () => {
 
   // Handle answer (for Test 1,2,3)
   const handleAnswer = (choice: string) => {
-    if (choice === correctAnswer) {
+    if (!correctAnswer) return;
+
+    const correct = choice === correctAnswer;
+    recordAttempt(choice, correctAnswer, correct, currentTest.title);
+
+    if (correct) {
       setFeedback("✅ Correct");
       speakText("Correct");
       if (currentIndex < shuffledQuestions.length - 1) {
@@ -176,8 +283,17 @@ const LanguageTest: React.FC = () => {
     const newWord =
       currentQuestion.wrong.slice(0, idx) +
       currentQuestion.wrong.slice(idx + 1);
+    const correct =
+      newWord.toLowerCase() === currentQuestion.correct.toLowerCase();
 
-    if (newWord.toLowerCase() === currentQuestion.correct.toLowerCase()) {
+    recordAttempt(
+      newWord,
+      currentQuestion.correct,
+      correct,
+      currentQuestion.wrong
+    );
+
+    if (correct) {
       setFeedback(`✅ Correct! ${currentQuestion.correct}`);
       speakText("Correct");
       setTimeout(() => {
@@ -236,8 +352,11 @@ const LanguageTest: React.FC = () => {
       info.cleanWrong.slice(0, info.insertionIndex) +
       ch +
       info.cleanWrong.slice(info.insertionIndex);
+    const correct = newWord.toLowerCase() === info.correct.toLowerCase();
 
-    if (newWord.toLowerCase() === info.correct.toLowerCase()) {
+    recordAttempt(newWord, info.correct, correct, info.displayWithBlank);
+
+    if (correct) {
       setFeedback(`✅ Correct! ${info.correct}`);
       speakText("Correct");
       setTimeout(() => {
@@ -272,8 +391,17 @@ const LanguageTest: React.FC = () => {
       currentQuestion.wrong.slice(0, selectedIndex) +
       ch +
       currentQuestion.wrong.slice(selectedIndex + 1);
+    const correct =
+      newWord.toLowerCase() === currentQuestion.correct.toLowerCase();
 
-    if (newWord.toLowerCase() === currentQuestion.correct.toLowerCase()) {
+    recordAttempt(
+      newWord,
+      currentQuestion.correct,
+      correct,
+      currentQuestion.wrong
+    );
+
+    if (correct) {
       setFeedback(`✅ Correct! ${currentQuestion.correct}`);
       speakText("Correct");
       setTimeout(() => {
@@ -308,9 +436,13 @@ const LanguageTest: React.FC = () => {
 
   // All finished
   if (finished) {
-    // Navigate to rating page
-    navigate("/test/language/rating");
-    return null;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-4xl font-bold text-green-600">
+          Saving your result...
+        </h1>
+      </div>
+    );
   }
 
   // Transition screen
@@ -471,15 +603,6 @@ const LanguageTest: React.FC = () => {
           )}
 
           {/* Nút Finish luôn hiển thị trong Test 6 */}
-          {currentTest.type === "replaceLetter" && (
-            <button
-              onClick={() => setFinished(true)}
-              className="mt-4 px-6 py-3 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
-            >
-              FINISH
-            </button>
-          )}
-
           {feedback && (
             <p className="text-lg font-medium mt-4">{feedback}</p>
           )}
@@ -501,7 +624,7 @@ const LanguageTest: React.FC = () => {
             setInputLetter("");
             setSelectedIndex(null);
           }}
-          className="mt-6 px-6 py-3 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
+          className="hidden mt-6 px-6 py-3 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
         >
           ⏭ NEXT TEST
         </button>

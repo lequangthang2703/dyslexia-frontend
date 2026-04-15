@@ -1,7 +1,7 @@
-import MiniGame2 from "../../../components/tests/minigame2/MiniGame2";
+import RobotDeliveryGame from "../../../components/tests/minigame2/RobotDeliveryGame";
 
 const MiniGame2Page = () => {
-  return <MiniGame2 />;
+  return <RobotDeliveryGame />;
 };
 
 export default MiniGame2Page;

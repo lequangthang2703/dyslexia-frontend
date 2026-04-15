@@ -16,7 +16,6 @@ import {
   GAME_CONFIG,
   LETTERS_POOL,
   PRAISE_MESSAGES,
-  ENCOURAGE_MESSAGES,
 } from "../components/tests/minigame4/uncheck/services/gameConfig";
 
 // --- INTERFACE STATE ---

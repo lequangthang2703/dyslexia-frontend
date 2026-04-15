@@ -13,20 +13,11 @@ const AuditoryTestInstruction = ({
   const onStartTest = async () => {
     const params = new URLSearchParams(location.search);
     let sessionId = params.get("sessionId");
-    let specificTestId = params.get("specificTestId");
 
     if (!sessionId) {
       const data = await testSessionService.startTestSession();
       if (!data) return;
       sessionId = data.id.toString();
-    }
-
-    if (!specificTestId) {
-      const specificTestSession =
-        await testSessionService.startSpecificTestSession(Number(sessionId), {
-          test_type: "AUDITORY",
-        });
-      specificTestId = specificTestSession.id.toString();
     }
 
     goToNextStep();

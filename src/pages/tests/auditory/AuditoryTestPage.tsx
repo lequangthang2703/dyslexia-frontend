@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuditorySoundOptionChoice, {
+  type AuditoryAnswerTelemetry,
   type AuditorySoundOptionChoiceQuestion,
 } from "../../../components/tests/auditory/AuditorySoundOptionChoice";
 
@@ -32,6 +33,7 @@ import catFishImg from "../../../assets/image/testVowels/catFish.jpg";
 import dogBoneImg from "../../../assets/image/testVowels/dogBone.jpg";
 
 import ProgressBar from "../../../components/common/ProgressBar";
+import { saveTestResult } from "../../../utils/testResultStorage";
 
 // Question banks (copied from AuditoryTest.tsx)
 const PA_QUESTION_BANK: AuditorySoundOptionChoiceQuestion[] = [
@@ -221,6 +223,27 @@ const QUESTIONS_INFO = [
 	},
 ];
 
+type AuditoryAttempt = {
+  questionIndex: number;
+  module: string;
+  moduleLabel: string;
+  questionText: string;
+  audioCount: number;
+  options: string[];
+  correctOptionIndex: number;
+  selectedOptionIndex: number;
+  isCorrect: boolean;
+  reactionTimeMs: number;
+  replayCount: number;
+  answeredAt: string;
+};
+
+type AuditoryTestDetails = {
+  questionCount: number;
+  correctCount: number;
+  attempts: AuditoryAttempt[];
+};
+
 
 const getRandomQuestions = () => {
   const pa_shuffled = PA_QUESTION_BANK.sort(() => 0.5 - Math.random());
@@ -256,14 +279,67 @@ const AuditoryTestPage = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [questions] = useState(getRandomQuestions());
   const [score, setScore] = useState(0);
+  const [attempts, setAttempts] = useState<AuditoryAttempt[]>([]);
+  const [startedAt] = useState(() => new Date().toISOString());
 
   const updateScore = (isCorrect: boolean) => {
     setScore((s) => s + (isCorrect ? 1 : 0));
   };
 
+  const recordAnswer = (
+    questionIndex: number,
+    telemetry: AuditoryAnswerTelemetry
+  ) => {
+    const question = questions[questionIndex];
+    const info = QUESTIONS_INFO[questionIndex];
+
+    const attempt: AuditoryAttempt = {
+      questionIndex,
+      module: info.module,
+      moduleLabel: info.text,
+      questionText: question.questionText,
+      audioCount: question.audios.length,
+      options: question.options.map((option) => option.text),
+      correctOptionIndex: question.correctOptionIndex,
+      selectedOptionIndex: telemetry.selectedOptionIndex,
+      isCorrect: telemetry.isCorrect,
+      reactionTimeMs: telemetry.reactionTimeMs,
+      replayCount: telemetry.replayCount,
+      answeredAt: telemetry.answeredAt,
+    };
+
+    setAttempts((previousAttempts) =>
+      [
+        ...previousAttempts.filter((item) => item.questionIndex !== questionIndex),
+        attempt,
+      ].sort((a, b) => a.questionIndex - b.questionIndex)
+    );
+  };
+
+  const saveAuditoryResult = () => {
+    const correctCount = attempts.filter((attempt) => attempt.isCorrect).length;
+    const finalScore = (correctCount / QUESTIONS_INFO.length) * 100;
+    const completedAt = new Date().toISOString();
+
+    saveTestResult<AuditoryTestDetails>("auditory", {
+      score: finalScore,
+      rawScore: correctCount,
+      maxScore: QUESTIONS_INFO.length,
+      startedAt,
+      completedAt,
+      durationMs: new Date(completedAt).getTime() - new Date(startedAt).getTime(),
+      details: {
+        questionCount: QUESTIONS_INFO.length,
+        correctCount,
+        attempts,
+      },
+    });
+  };
+
   const goToNextQuestion = () => {
     setShowFeedback(false);
     if (currentQuestionIndex === QUESTIONS_INFO.length - 1) {
+      saveAuditoryResult();
       // Last question, go to rating
       navigate("/test/auditory/rating");
     } else {
@@ -271,113 +347,18 @@ const AuditoryTestPage = () => {
     }
   };
 
-  const currentModule = QUESTIONS_INFO[currentQuestionIndex].module;
-  let stepContent;
-
-  switch (currentModule) {
-    case "PHONOLOGICAL_AWARENESS/1":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[0]}
-        />
-      );
-      break;
-    case "PHONOLOGICAL_AWARENESS/2":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[1]}
-        />
-      );
-      break;
-    case "DECODING/1":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[2]}
-        />
-      );
-      break;
-    case "DECODING/2":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[3]}
-        />
-      );
-      break;
-    case "UNDERSTANDING_FLUENCY/1":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[4]}
-        />
-      );
-      break;
-    case "UNDERSTANDING_FLUENCY/2":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[5]}
-        />
-      );
-      break;
-    case "LANGUAGE_COMPREHENSION/1":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[6]}
-        />
-      );
-      break;
-    case "LANGUAGE_COMPREHENSION/2":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[7]}
-        />
-      );
-      break;
-    case "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/1":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[8]}
-        />
-      );
-      break;
-    case "PHONOLOGICAL_AWARENESS_IN_A_SENTENCE/2":
-      stepContent = (
-        <AuditorySoundOptionChoice
-          updateScore={updateScore}
-          showFeedback={showFeedback}
-          setShowFeedback={setShowFeedback}
-          question={questions[9]}
-        />
-      );
-      break;
-    default:
-      stepContent = <div>Unknown question</div>;
-  }
+  const currentQuestion = questions[currentQuestionIndex];
+  const stepContent = currentQuestion ? (
+    <AuditorySoundOptionChoice
+      updateScore={updateScore}
+      showFeedback={showFeedback}
+      setShowFeedback={setShowFeedback}
+      question={currentQuestion}
+      onAnswer={(telemetry) => recordAnswer(currentQuestionIndex, telemetry)}
+    />
+  ) : (
+    <div>Unknown question</div>
+  );
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-cyan p-8 rounded-2xl">

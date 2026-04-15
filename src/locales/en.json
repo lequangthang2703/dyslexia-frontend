@@ -113,14 +113,14 @@
       "fun_desc": "Learning through games helps kids love reading more"
     },
     "games": {
-      "game_1_name": "Game 1",
-      "game_1_desc": "Spelling Bee - Spelling",
-      "game_2_name": "Game 2",
-      "game_2_desc": "Reading Skill Practice",
+      "game_1_name": "Honey Garden",
+      "game_1_desc": "Listen to clues, type the word, and help the bee collect honey.",
+      "game_2_name": "Robot Delivery",
+      "game_2_desc": "Read each statement and guide the robot to the right lane.",
       "game_3_name": "Game 3",
       "game_3_desc": "Magic Tree - Fill in letters",
-      "game_4_name": "Game 4",
-      "game_4_desc": "Space Rescue - Writing letters",
+      "game_4_name": "Letter Meteor Station",
+      "game_4_desc": "Find the target letter among easy-to-confuse letters.",
       "game_5_name": "Game 5",
       "game_5_desc": "Coming soon"
     }

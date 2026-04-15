@@ -1,7 +1,7 @@
-import LanguageTest from "../../../components/tests/language/LanguageTest";
+import VietnameseLanguageTest from "../../../components/tests/language/VietnameseLanguageTest";
 
 const LanguageTestPage = () => {
-  return <LanguageTest />;
+  return <VietnameseLanguageTest />;
 };
 
 export default LanguageTestPage;

@@ -1,7 +1,7 @@
-import MiniGame2Instruction from "../../../components/tests/minigame2/MiniGame2Instruction";
+import RobotFactFactoryInstruction from "../../../components/tests/minigame2/RobotFactFactoryInstruction";
 
 const MiniGame2InstructionPage = () => {
-  return <MiniGame2Instruction />;
+  return <RobotFactFactoryInstruction />;
 };
 
 export default MiniGame2InstructionPage;

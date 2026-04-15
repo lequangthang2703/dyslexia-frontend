@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SpeakerIcon from "./SpeakerIcon";
 
 export interface TestComponentProps {
@@ -19,8 +19,17 @@ export type AuditorySoundOptionChoiceQuestion = {
 	correctOptionIndex: number;
 };
 
+export type AuditoryAnswerTelemetry = {
+	selectedOptionIndex: number;
+	isCorrect: boolean;
+	reactionTimeMs: number;
+	replayCount: number;
+	answeredAt: string;
+};
+
 export interface AuditorySoundOptionChoiceProps extends TestComponentProps {
 	question: AuditorySoundOptionChoiceQuestion;
+	onAnswer?: (telemetry: AuditoryAnswerTelemetry) => void;
 }
 
 const AuditorySoundOptionChoice = ({
@@ -28,43 +37,55 @@ const AuditorySoundOptionChoice = ({
 	showFeedback,
 	setShowFeedback,
 	question,
+	onAnswer,
 }: AuditorySoundOptionChoiceProps) => {
-	const [playingAudio, setPlayingAudio] = useState<HTMLAudioElement | null>(
+	const [, setPlayingAudio] = useState<HTMLAudioElement | null>(
 		null
 	);
 	const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 	const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+	const startedAtRef = useRef(Date.now());
+	const replayCountRef = useRef(0);
+	const playingAudioRef = useRef<HTMLAudioElement | null>(null);
+
+	const stopCurrentAudio = useCallback(() => {
+		if (!playingAudioRef.current) return;
+		playingAudioRef.current.pause();
+		playingAudioRef.current.currentTime = 0;
+		playingAudioRef.current = null;
+		setPlayingAudio(null);
+	}, []);
 
 	// Auto play the first audio when component mounts
 	useEffect(() => {
 		setSelectedAnswer(null);
 		setShowFeedback(false);
+		startedAtRef.current = Date.now();
+		replayCountRef.current = 0;
 
-		if (playingAudio) {
-			playingAudio.pause();
-			playingAudio.currentTime = 0;
-			setPlayingAudio(null);
-		}
+		stopCurrentAudio();
 
 		const timeoutId = setTimeout(() => {
-			console.log("Playing first audio:", question.audios[0]);
-
 			const firstAudio = new Audio(question.audios[0]);
+			playingAudioRef.current = firstAudio;
 			setPlayingAudio(firstAudio);
 
 			firstAudio.onended = () => {
+				if (playingAudioRef.current === firstAudio) {
+					playingAudioRef.current = null;
+				}
 				setPlayingAudio(null);
 
 				if (question.audios.length != 2) return;
 				const secondTimeoutId = setTimeout(() => {
 					if (question.audios[1]) {
-						console.log(
-							"Playing second audio:",
-							question.audios[1]
-						);
 						const secondAudio = new Audio(question.audios[1]);
+						playingAudioRef.current = secondAudio;
 						setPlayingAudio(secondAudio);
 						secondAudio.onended = () => {
+							if (playingAudioRef.current === secondAudio) {
+								playingAudioRef.current = null;
+							}
 							setPlayingAudio(null);
 						};
 						secondAudio.play().catch(console.error);
@@ -77,23 +98,26 @@ const AuditorySoundOptionChoice = ({
 			firstAudio.play().catch(console.error);
 		}, 500);
 
-		return () => clearTimeout(timeoutId);
-	}, [question]);
+		return () => {
+			clearTimeout(timeoutId);
+			stopCurrentAudio();
+		};
+	}, [question, setShowFeedback, stopCurrentAudio]);
 
 	const playAudio = (audioSrc: string) => {
-		console.log("playAudio called with:", audioSrc);
-
-		if (playingAudio) {
-			playingAudio.pause();
-			playingAudio.currentTime = 0;
-		}
+		replayCountRef.current += 1;
+		stopCurrentAudio();
 
 		const audio = new Audio(audioSrc);
+		playingAudioRef.current = audio;
 		setPlayingAudio(audio);
 
 		audio.play().catch(console.error);
 
 		audio.onended = () => {
+			if (playingAudioRef.current === audio) {
+				playingAudioRef.current = null;
+			}
 			setPlayingAudio(null);
 		};
 	};
@@ -106,6 +130,13 @@ const AuditorySoundOptionChoice = ({
 		setShowFeedback(true);
 
 		updateScore(correct);
+		onAnswer?.({
+			selectedOptionIndex: answerIndex,
+			isCorrect: correct,
+			reactionTimeMs: Date.now() - startedAtRef.current,
+			replayCount: replayCountRef.current,
+			answeredAt: new Date().toISOString(),
+		});
 	};
 
 	return (

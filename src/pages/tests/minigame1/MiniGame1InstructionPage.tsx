@@ -1,7 +1,7 @@
-import MiniGame1Instruction from "../../../components/tests/minigame1/MiniGame1Instruction";
+import GardenSpellingInstruction from "../../../components/tests/minigame1/GardenSpellingInstruction";
 
 const MiniGame1InstructionPage = () => {
-  return <MiniGame1Instruction />;
+  return <GardenSpellingInstruction />;
 };
 
 export default MiniGame1InstructionPage;
