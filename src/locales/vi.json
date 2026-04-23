@@ -134,5 +134,43 @@
       "game_5_name": "Trò chơi 5",
       "game_5_desc": "Sắp ra mắt"
     }
+  },
+  "minigame1": {
+    "instruction": {
+      "tag": "Minigame 1",
+      "title": "Spelling Bee: Vườn Hoa Mật",
+      "desc": "Nghe phát âm, đọc mô tả và gõ lại từ bạn nghe được để giúp ong thu mật và làm vườn hoa nở dần.",
+      "guide_title": "Hướng dẫn",
+      "listen_1": "Bấm",
+      "listen_btn": "Nghe lại",
+      "listen_2": "để nghe từ cần trả lời.",
+      "guess_1": "Dựa vào",
+      "guess_desc": "mô tả",
+      "guess_and": "và",
+      "guess_ex": "ví dụ",
+      "guess_2": "để đoán từ chính xác.",
+      "typing_rule": "Có thể gõ không dấu. Hệ thống tự bỏ dấu và bỏ khoảng trắng dư khi chấm.",
+      "encouragement": "Cố gắng giữ chuỗi đúng để ong bay mượt qua cả vườn.",
+      "start_btn": "Bắt đầu chơi"
+    },
+    "game": {
+      "honey_collected": "Mật đã thu",
+      "flower_garden": "Vườn hoa",
+      "type_word": "Nghe và gõ từ",
+      "question": "Câu hỏi",
+      "streak": "Chuỗi đúng",
+      "correct": "Chính xác",
+      "description": "Mô tả",
+      "example": "Ví dụ",
+      "hint_rule": "Có thể gõ không dấu. Hãy nghe âm thanh, đọc gợi ý, rồi đưa ong đến bông hoa tiếp theo.",
+      "placeholder": "Nhập từ bạn nghe được...",
+      "feedback_right": "Chính xác, thêm một giọt mật.",
+      "feedback_wrong": "Chưa đúng. Đáp án là",
+      "feedback_idle": "Sẵn sàng kiểm tra.",
+      "check_btn": "Kiểm tra",
+      "bee_success": "Ong đã lấy được mật",
+      "bee_fail": "Bay tiếp sang bông sau",
+      "flight_path": "đường bay"
+    }
   }
 }

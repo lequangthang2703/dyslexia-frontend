@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { MG1_ITEMS } from "../../../data/minigame1";
+import { useTranslation } from "react-i18next";
 import SpeakerIcon from "../auditory/SpeakerIcon";
+import GameLanguageSwitch from "../../common/GameLanguageSwitch";
 
 type Feedback = "idle" | "right" | "wrong";
 
@@ -12,6 +13,17 @@ type GameState = {
   streak: number;
   input: string;
   feedback: Feedback;
+};
+
+// Define the shape of the data coming from your FastAPI backend
+export type QuestionResponse = {
+  id: number;
+  minigame_number: string;
+  game_payload: { audio_url: string | null; hint: string | null } | null;
+  content: {
+    vi: { word: string; description: string; example: string };
+    en: { word: string; description: string; example: string };
+  };
 };
 
 const FLOWER_COUNT = 10;
@@ -72,6 +84,7 @@ function FlowerField({
   feedback: Feedback;
   totalQuestions: number;
 }) {
+  const { t } = useTranslation();
   const bloomedFlowers = Math.floor((correct / totalQuestions) * FLOWER_COUNT);
   const flowers = Array.from({ length: FLOWER_COUNT }, (_, index) => {
     const isBloomed = index < bloomedFlowers;
@@ -117,13 +130,13 @@ function FlowerField({
       <div className="absolute inset-x-0 bottom-0 h-32 bg-emerald-100" />
       <div className="absolute inset-x-8 bottom-28 h-2 rounded-full bg-emerald-300" />
       <div className="absolute left-8 top-6 rounded-lg border border-sky-100 bg-white/80 px-4 py-3 shadow-sm">
-        <div className="text-sm font-semibold text-slate-500">Mật đã thu</div>
+        <div className="text-sm font-semibold text-slate-500">{t("minigame1.game.honey_collected")}</div>
         <div className="text-3xl font-extrabold text-emerald-700">
           {correct}/{totalQuestions}
         </div>
       </div>
       <div className="absolute right-8 top-6 rounded-lg border border-amber-100 bg-white/80 px-4 py-3 text-right shadow-sm">
-        <div className="text-sm font-semibold text-slate-500">Vườn hoa</div>
+        <div className="text-sm font-semibold text-slate-500">{t("minigame1.game.flower_garden")}</div>
         <div className="text-3xl font-extrabold text-amber-600">
           {bloomedFlowers}/{FLOWER_COUNT}
         </div>
@@ -136,13 +149,13 @@ function FlowerField({
       <FlyingBee progress={progress} />
 
       {feedback === "right" && (
-        <div className="absolute left-1/2 top-20 -translate-x-1/2 rounded-lg border border-emerald-200 bg-white px-4 py-2 font-bold text-emerald-700 shadow-md">
-          Ong đã lấy được mật
+        <div className="absolute left-1/2 top-20 -translate-x-1/2 rounded-lg border border-emerald-200 bg-white px-4 py-2 font-bold text-emerald-700 shadow-md whitespace-nowrap">
+          {t("minigame1.game.bee_success")}
         </div>
       )}
       {feedback === "wrong" && (
-        <div className="absolute left-1/2 top-20 -translate-x-1/2 rounded-lg border border-rose-200 bg-white px-4 py-2 font-bold text-rose-700 shadow-md">
-          Bay tiếp sang bông sau
+        <div className="absolute left-1/2 top-20 -translate-x-1/2 rounded-lg border border-rose-200 bg-white px-4 py-2 font-bold text-rose-700 shadow-md whitespace-nowrap">
+          {t("minigame1.game.bee_fail")}
         </div>
       )}
 
@@ -154,7 +167,7 @@ function FlowerField({
           />
         </div>
         <div className="mt-2 text-center text-sm font-semibold text-slate-600">
-          {Math.round(progress * 100)}% đường bay
+          {Math.round(progress * 100)}% {t("minigame1.game.flight_path")}
         </div>
       </div>
     </div>
@@ -164,10 +177,36 @@ function FlowerField({
 export default function GardenSpellingGame() {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t, i18n } = useTranslation();
+  
+  const [dbQuestions, setDbQuestions] = useState<QuestionResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/v1/questions/one");
+        if (response.ok) {
+          const data = await response.json();
+          setDbQuestions(data);
+        } else {
+          console.error("Failed to fetch questions");
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
   const gameItems = useMemo(
-    () => getRandomItems(MG1_ITEMS, QUESTIONS_PER_GAME),
-    []
+    () => getRandomItems(dbQuestions, Math.min(QUESTIONS_PER_GAME, dbQuestions.length)),
+    [dbQuestions]
   );
+
   const [state, setState] = useState<GameState>({
     index: 0,
     correct: 0,
@@ -177,8 +216,12 @@ export default function GardenSpellingGame() {
   });
 
   const item = gameItems[state.index];
+  
+  const currentLang = i18n.language.startsWith("en") ? "en" : "vi";
+  const currentQuestionData = item ? item.content[currentLang] : null;
+
   const progress = useMemo(
-    () => state.correct / gameItems.length,
+    () => (gameItems.length > 0 ? state.correct / gameItems.length : 0),
     [gameItems.length, state.correct]
   );
 
@@ -187,28 +230,41 @@ export default function GardenSpellingGame() {
   }, [state.index]);
 
   const playAudio = () => {
-    if (!item) return;
+    if (!currentQuestionData) return;
 
-    if (item.audioUrl) {
-      const audio = new Audio(item.audioUrl);
+    if (item?.game_payload?.audio_url) {
+      const audio = new Audio(item.game_payload.audio_url);
       audio.play().catch(() => {});
       return;
     }
 
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(item.word);
-      utterance.lang = "vi-VN";
+      
+      const utterance = new SpeechSynthesisUtterance(currentQuestionData.word);
+      const targetLang = currentLang === "en" ? "en-US" : "vi-VN";
+      
+      utterance.lang = targetLang;
       utterance.rate = 0.86;
+
+      const availableVoices = window.speechSynthesis.getVoices();
+
+      const voicePrefix = currentLang === "en" ? "en" : "vi";
+      const selectedVoice = availableVoices.find(voice => voice.lang.toLowerCase().startsWith(voicePrefix));
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+
       window.speechSynthesis.speak(utterance);
     }
   };
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (!item || state.feedback !== "idle") return;
+    if (!currentQuestionData || state.feedback !== "idle") return;
 
-    const isRight = normalizeAnswer(state.input) === normalizeAnswer(item.word);
+    const isRight = normalizeAnswer(state.input) === normalizeAnswer(currentQuestionData.word);
     const nextCorrect = isRight ? state.correct + 1 : state.correct;
     const nextStreak = isRight ? state.streak + 1 : 0;
     const nextIndex = state.index + 1;
@@ -236,8 +292,18 @@ export default function GardenSpellingGame() {
     }, FEEDBACK_DELAY);
   };
 
+  if (isLoading) {
+    return <div className="flex h-screen items-center justify-center font-bold text-emerald-600">Loading Game Data...</div>;
+  }
+
+  if (gameItems.length === 0) {
+    return <div className="flex h-screen items-center justify-center font-bold text-rose-600">No questions available.</div>;
+  }
+
   return (
-    <main className="w-[1280px] max-w-[98vw] p-3">
+    <main className="relative w-[1280px] max-w-[98vw] p-3">
+      {/* Language Toggle Button */}
+
       <div className="grid grid-cols-1 gap-5 md:grid-cols-[1.08fr_0.92fr]">
         <FlowerField
           correct={state.correct}
@@ -253,23 +319,29 @@ export default function GardenSpellingGame() {
                 Spelling Bee
               </p>
               <h1 className="mt-1 text-3xl font-extrabold text-slate-900">
-                Nghe và gõ từ
+                {t("minigame1.game.type_word")}
               </h1>
             </div>
-            <button
-              onClick={playAudio}
-              className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-3 font-bold text-white shadow-md shadow-sky-100 transition hover:bg-sky-700 active:scale-[0.98]"
-              type="button"
-            >
-              <SpeakerIcon className="h-5 w-5" />
-              Nghe lại
-            </button>
+            
+            {/* Wrap both buttons in a flex container */}
+            <div className="flex items-center gap-3">
+              <GameLanguageSwitch />
+              
+              <button
+                onClick={playAudio}
+                className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-3 font-bold text-white shadow-md shadow-sky-100 transition hover:bg-sky-700 active:scale-[0.98]"
+                type="button"
+              >
+                <SpeakerIcon className="h-5 w-5" />
+                {t("minigame1.instruction.listen_btn")}
+              </button>
+            </div>
           </div>
 
           <div className="mb-5 grid grid-cols-3 gap-3">
             <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
               <div className="text-xs font-semibold text-slate-500">
-                Câu hỏi
+                {t("minigame1.game.question")}
               </div>
               <div className="text-2xl font-extrabold text-emerald-700">
                 {state.index + 1}/{gameItems.length}
@@ -277,7 +349,7 @@ export default function GardenSpellingGame() {
             </div>
             <div className="rounded-lg border border-amber-100 bg-amber-50 p-3">
               <div className="text-xs font-semibold text-slate-500">
-                Chuỗi đúng
+                {t("minigame1.game.streak")}
               </div>
               <div className="text-2xl font-extrabold text-amber-700">
                 {state.streak}
@@ -285,7 +357,7 @@ export default function GardenSpellingGame() {
             </div>
             <div className="rounded-lg border border-sky-100 bg-sky-50 p-3">
               <div className="text-xs font-semibold text-slate-500">
-                Chính xác
+                {t("minigame1.game.correct")}
               </div>
               <div className="text-2xl font-extrabold text-sky-700">
                 {state.correct}
@@ -296,23 +368,22 @@ export default function GardenSpellingGame() {
           <div className="flex-1 space-y-4">
             <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-4">
               <span className="mb-1 block font-bold text-emerald-700">
-                Mô tả
+                {t("minigame1.game.description")}
               </span>
               <p className="text-lg leading-relaxed text-slate-800">
-                {item?.description}
+                {currentQuestionData?.description}
               </p>
             </div>
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <span className="mb-1 block font-bold text-slate-700">Ví dụ</span>
+              <span className="mb-1 block font-bold text-slate-700">{t("minigame1.game.example")}</span>
               <p className="text-lg italic leading-relaxed text-slate-800">
-                "{item?.example}"
+                "{currentQuestionData?.example}"
               </p>
             </div>
 
             <p className="rounded-lg border border-amber-100 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
-              Có thể gõ không dấu. Hãy nghe âm thanh, đọc gợi ý, rồi đưa ong
-              đến bông hoa tiếp theo.
+              {t("minigame1.game.hint_rule")}
             </p>
           </div>
 
@@ -326,7 +397,7 @@ export default function GardenSpellingGame() {
                   input: event.target.value,
                 }))
               }
-              placeholder="Nhập từ bạn nghe được..."
+              placeholder={t("minigame1.game.placeholder")}
               className="w-full rounded-lg border border-slate-200 bg-slate-50 px-5 py-4 text-lg text-slate-900 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
               autoComplete="off"
               disabled={state.feedback !== "idle"}
@@ -342,17 +413,16 @@ export default function GardenSpellingGame() {
                     : "text-slate-500"
                 }`}
               >
-                {state.feedback === "right" && "Chính xác, thêm một giọt mật."}
-                {state.feedback === "wrong" &&
-                  `Chưa đúng. Đáp án là "${item?.word}".`}
-                {state.feedback === "idle" && "Sẵn sàng kiểm tra."}
+                {state.feedback === "right" && t("minigame1.game.feedback_right")}
+                {state.feedback === "wrong" && `${t("minigame1.game.feedback_wrong")} "${currentQuestionData?.word}".`}
+                {state.feedback === "idle" && t("minigame1.game.feedback_idle")}
               </div>
               <button
                 type="submit"
                 className="rounded-lg bg-emerald-600 px-6 py-3 font-bold text-white shadow-md shadow-emerald-100 transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
                 disabled={state.feedback !== "idle" || !state.input.trim()}
               >
-                Kiểm tra
+                {t("minigame1.game.check_btn")}
               </button>
             </div>
           </form>

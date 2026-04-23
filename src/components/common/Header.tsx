@@ -16,7 +16,7 @@ const Header = () => {
 
   const languageLabels = {
     button: currentLanguage === "vi" ? "Ng\u00F4n ng\u1EEF" : "Language",
-    vi: currentLanguage === "vi" ? "Ti\u1EBFng Vi\u1EC7t" : "Vietnamese",
+    vi: currentLanguage === "vi" ? "Ti\u1EBFng Vi\u1EC7t" : "Tiếng Việt",
     en: currentLanguage === "vi" ? "Ti\u1EBFng Anh" : "English",
   };
 

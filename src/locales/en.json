@@ -134,5 +134,43 @@
       "game_5_name": "Game 5",
       "game_5_desc": "Coming soon"
     }
+  },
+  "minigame1": {
+    "instruction": {
+      "tag": "Minigame 1",
+      "title": "Spelling Bee: Honey Garden",
+      "desc": "Listen to the pronunciation, read the description, and type the word you hear to help the bee collect honey and bloom the garden.",
+      "guide_title": "Instructions",
+      "listen_1": "Click",
+      "listen_btn": "Listen",
+      "listen_2": "to hear the target word.",
+      "guess_1": "Use the",
+      "guess_desc": "description",
+      "guess_and": "and",
+      "guess_ex": "example",
+      "guess_2": "to guess the exact word.",
+      "typing_rule": "You can type without accents. The system automatically removes accents and extra spaces when checking.",
+      "encouragement": "Try to keep a correct streak so the bee flies smoothly across the garden.",
+      "start_btn": "Start Playing"
+    },
+    "game": {
+      "honey_collected": "Honey Collected",
+      "flower_garden": "Garden",
+      "type_word": "Listen and Type",
+      "question": "Question",
+      "streak": "Streak",
+      "correct": "Correct",
+      "description": "Description",
+      "example": "Example",
+      "hint_rule": "You can type without accents. Listen to the audio, read the hints, and guide the bee to the next flower.",
+      "placeholder": "Type the word you hear...",
+      "feedback_right": "Correct, one more drop of honey!",
+      "feedback_wrong": "Not quite. The answer is",
+      "feedback_idle": "Ready to check.",
+      "check_btn": "Check",
+      "bee_success": "The bee got the honey!",
+      "bee_fail": "Flying to the next flower...",
+      "flight_path": "flight path"
+    }
   }
 }
