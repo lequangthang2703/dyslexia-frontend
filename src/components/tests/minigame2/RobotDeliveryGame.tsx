@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { QUESTIONS } from "../../../data/minigame2";
+import { useTranslation } from "react-i18next";
+import GameLanguageSwitch from "../../common/GameLanguageSwitch";
+import SpeakerIcon from "../auditory/SpeakerIcon";
 
 type Lane = "truth" | "noise";
 
@@ -8,6 +10,17 @@ type DeliveryLogItem = {
   id: number;
   correct: boolean;
   lane: Lane;
+};
+
+// FastAPI Backend Schema
+export type QuestionResponse = {
+  id: number;
+  minigame_number: string;
+  game_payload: { correct_answer: boolean; audio_url?: string | null };
+  content: {
+    vi: { word: string; description: string; example: string };
+    en: { word: string; description: string; example: string };
+  };
 };
 
 const FEEDBACK_DELAY = 900;
@@ -64,10 +77,11 @@ function PackageShelf({
   delivered: number;
   total: number;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-amber-100 bg-white p-4">
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-bold text-slate-800">Kiện hàng đã giao</span>
+        <span className="font-bold text-slate-800">{t("minigame2.game.delivered", "Kiện hàng đã giao")}</span>
         <span className="text-sm font-semibold text-slate-500">
           {delivered}/{total}
         </span>
@@ -108,6 +122,7 @@ function DeliveryRoute({
   lastLane: Lane | null;
   deliveryLog: DeliveryLogItem[];
 }) {
+  const { t } = useTranslation();
   const progress = totalQuestions > 0 ? answered / totalQuestions : 0;
 
   return (
@@ -115,14 +130,14 @@ function DeliveryRoute({
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase text-sky-700">
-            Robot Delivery
+            {t("minigame2.instruction.tag", "Robot Delivery")}
           </p>
           <h1 className="mt-1 text-3xl font-extrabold text-slate-900">
-            Giao Hàng Sự Thật
+            {t("minigame2.instruction.title", "Giao Hàng Sự Thật")}
           </h1>
         </div>
         <div className="rounded-lg border border-emerald-100 bg-white px-4 py-3 text-right shadow-sm">
-          <div className="text-sm font-semibold text-slate-500">Nhiệm vụ</div>
+          <div className="text-sm font-semibold text-slate-500">{t("minigame2.game.task", "Nhiệm vụ")}</div>
           <div className="text-3xl font-extrabold text-emerald-700">
             {answered}/{totalQuestions}
           </div>
@@ -134,10 +149,10 @@ function DeliveryRoute({
         <div className="absolute inset-x-0 top-[57%] h-20 bg-rose-500/20" />
         <div className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 bg-white/30" />
         <div className="pointer-events-none absolute left-1/2 top-[28%] -translate-x-1/2 -translate-y-1/2 text-lg font-extrabold tracking-wider text-emerald-100/80 drop-shadow">
-          LÀN ĐÚNG
+          {t("minigame2.game.true_lane", "LÀN ĐÚNG")}
         </div>
         <div className="pointer-events-none absolute left-1/2 top-[57%] -translate-x-1/2 -translate-y-1/2 text-lg font-extrabold tracking-wider text-rose-100/80 drop-shadow">
-          LÀN SAI
+          {t("minigame2.game.false_lane", "LÀN SAI")}
         </div>
 
         <div className="absolute bottom-4 left-6 right-6 h-3 overflow-hidden rounded bg-white/20">
@@ -158,8 +173,8 @@ function DeliveryRoute({
             }`}
           >
             {feedback === "right"
-              ? "Qua cổng an toàn, giao thêm một kiện hàng."
-              : "Nhầm làn rồi, robot phải quay lại trạm."}
+              ? t("minigame2.game.feedback_right_msg", "Qua cổng an toàn, giao thêm một kiện hàng.")
+              : t("minigame2.game.feedback_wrong_msg", "Nhầm làn rồi, robot phải quay lại trạm.")}
           </div>
         )}
       </div>
@@ -168,7 +183,7 @@ function DeliveryRoute({
         <PackageShelf delivered={delivered} total={totalQuestions} />
 
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <div className="mb-3 font-bold text-slate-800">Nhật ký làn</div>
+          <div className="mb-3 font-bold text-slate-800">{t("minigame2.game.log_title", "Nhật ký làn")}</div>
           <div className="flex min-h-14 flex-wrap gap-2">
             {deliveryLog.map((entry) => (
               <span
@@ -184,7 +199,7 @@ function DeliveryRoute({
             ))}
             {deliveryLog.length === 0 && (
               <span className="text-sm font-semibold text-slate-500">
-                Robot đang chờ kiện hàng đầu tiên.
+                {t("minigame2.game.log_empty", "Robot đang chờ kiện hàng đầu tiên.")}
               </span>
             )}
           </div>
@@ -193,7 +208,7 @@ function DeliveryRoute({
 
       {lastLane && feedback !== "idle" && (
         <div className="mt-4 rounded-lg border border-slate-200 bg-white px-4 py-3 text-center font-semibold text-slate-700">
-          Robot vừa chọn làn {lastLane === "truth" ? "ĐÚNG" : "SAI"}.
+          Robot vừa chọn làn {lastLane === "truth" ? t("minigame2.game.true_lane", "ĐÚNG") : t("minigame2.game.false_lane", "SAI")}.
         </div>
       )}
     </section>
@@ -202,10 +217,36 @@ function DeliveryRoute({
 
 export default function RobotDeliveryGame() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  const [dbQuestions, setDbQuestions] = useState<QuestionResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // FETCH DATA FROM DATABASE
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/v1/questions/two");
+        if (response.ok) {
+          const data = await response.json();
+          setDbQuestions(data);
+        } else {
+          console.error("Failed to fetch questions");
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
+
   const gameQuestions = useMemo(
-    () => getRandomItems(QUESTIONS, QUESTIONS_PER_GAME),
-    []
+    () => getRandomItems(dbQuestions, Math.min(QUESTIONS_PER_GAME, dbQuestions.length)),
+    [dbQuestions]
   );
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [delivered, setDelivered] = useState(0);
   const [missed, setMissed] = useState(0);
@@ -214,14 +255,55 @@ export default function RobotDeliveryGame() {
   const [lastLane, setLastLane] = useState<Lane | null>(null);
   const [deliveryLog, setDeliveryLog] = useState<DeliveryLogItem[]>([]);
 
+  if (isLoading) {
+    return <div className="flex h-screen items-center justify-center font-bold text-sky-600">Loading Game Data...</div>;
+  }
+
+  if (gameQuestions.length === 0) {
+    return <div className="flex h-screen items-center justify-center font-bold text-rose-600">No questions available.</div>;
+  }
+
   const currentQuestion = gameQuestions[currentQuestionIndex];
   const answered = deliveryLog.length;
+
+  const currentLang = i18n.language.startsWith("en") ? "en" : "vi";
+  const currentQuestionData = currentQuestion ? currentQuestion.content[currentLang] : null;
+
+  // PLAY AUDIO LOGIC
+  const playAudio = () => {
+    if (!currentQuestionData || !currentQuestion) return;
+
+    if (currentQuestion.game_payload?.audio_url) {
+      const audio = new Audio(currentQuestion.game_payload.audio_url);
+      audio.play().catch(() => {});
+      return;
+    }
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(currentQuestionData.word);
+      const targetLang = currentLang === "en" ? "en-US" : "vi-VN";
+      
+      utterance.lang = targetLang;
+      utterance.rate = 0.86;
+
+      const availableVoices = window.speechSynthesis.getVoices();
+      const voicePrefix = currentLang === "en" ? "en" : "vi";
+      const selectedVoice = availableVoices.find(voice => voice.lang.toLowerCase().startsWith(voicePrefix));
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const handleAnswer = (userAnswer: boolean) => {
     if (feedback !== "idle" || !currentQuestion) return;
 
     const selectedLane: Lane = userAnswer ? "truth" : "noise";
-    const correct = userAnswer === currentQuestion.correctAnswer;
+    // Using correct_answer from the database payload
+    const correct = userAnswer === currentQuestion.game_payload.correct_answer;
     const nextIndex = currentQuestionIndex + 1;
 
     setLane(selectedLane);
@@ -266,24 +348,37 @@ export default function RobotDeliveryGame() {
           <div className="mb-5 flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-semibold uppercase text-sky-700">
-                Phân loại tín hiệu
+                {t("minigame2.instruction.tag", "Phân loại tín hiệu")}
               </p>
               <h2 className="mt-1 text-3xl font-extrabold text-slate-900">
-                Đưa robot vào đúng làn
+                {t("minigame2.instruction.title", "Đưa robot vào đúng làn")}
               </h2>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-right">
-              <div className="text-sm font-semibold text-slate-500">Câu</div>
+            
+            {/* Added Audio and Language controls */}
+            <div className="flex items-center gap-3">
+              <GameLanguageSwitch />
+              <button
+                onClick={playAudio}
+                className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-3 font-bold text-white shadow-md shadow-sky-100 transition hover:bg-sky-700 active:scale-[0.98]"
+                type="button"
+              >
+                <SpeakerIcon className="h-5 w-5" />
+                {t("minigame1.instruction.listen_btn", "Nghe lại")}
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-5 grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-center">
+              <div className="text-xs font-semibold text-slate-500">{t("minigame1.game.question", "Câu")}</div>
               <div className="text-2xl font-extrabold text-slate-900">
                 {currentQuestionIndex + 1}/{gameQuestions.length}
               </div>
             </div>
-          </div>
-
-          <div className="mb-5 grid grid-cols-2 gap-3">
             <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
               <div className="text-xs font-semibold text-slate-500">
-                Giao được
+                {t("minigame2.game.delivered", "Giao được")}
               </div>
               <div className="text-2xl font-extrabold text-emerald-700">
                 {delivered}
@@ -291,7 +386,7 @@ export default function RobotDeliveryGame() {
             </div>
             <div className="rounded-lg border border-rose-100 bg-rose-50 p-3">
               <div className="text-xs font-semibold text-slate-500">
-                Nhầm làn
+                {t("minigame2.game.missed", "Nhầm làn")}
               </div>
               <div className="text-2xl font-extrabold text-rose-700">
                 {missed}
@@ -302,10 +397,10 @@ export default function RobotDeliveryGame() {
           <div className="flex flex-1 items-center">
             <div className="w-full rounded-lg border border-sky-100 bg-sky-50 p-6">
               <div className="mb-3 text-sm font-bold uppercase text-sky-700">
-                Kiện hàng cần phân loại
+                {t("minigame2.game.package_title", "Kiện hàng cần phân loại")}
               </div>
               <p className="min-h-28 text-center text-2xl font-bold leading-relaxed text-slate-900">
-                {currentQuestion?.sentence}
+                {currentQuestionData?.word}
               </p>
             </div>
           </div>
@@ -317,7 +412,7 @@ export default function RobotDeliveryGame() {
               className="rounded-lg bg-emerald-600 py-4 text-xl font-extrabold text-white shadow-md shadow-emerald-100 transition hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
               type="button"
             >
-              LÀN ĐÚNG
+              {t("minigame2.game.true_lane", "LÀN ĐÚNG")}
             </button>
             <button
               onClick={() => handleAnswer(false)}
@@ -325,7 +420,7 @@ export default function RobotDeliveryGame() {
               className="rounded-lg bg-rose-600 py-4 text-xl font-extrabold text-white shadow-md shadow-rose-100 transition hover:bg-rose-700 active:scale-[0.98] disabled:opacity-60"
               type="button"
             >
-              LÀN SAI
+              {t("minigame2.game.false_lane", "LÀN SAI")}
             </button>
           </div>
 
@@ -339,10 +434,10 @@ export default function RobotDeliveryGame() {
             }`}
           >
             {feedback === "right" &&
-              "Chính xác. Robot đã giao kiện hàng vào đúng cổng."}
-            {feedback === "wrong" && "Chưa đúng. Hãy đọc kỹ kiện tiếp theo."}
+              t("minigame2.game.feedback_right_msg", "Chính xác. Robot đã giao kiện hàng vào đúng cổng.")}
+            {feedback === "wrong" && t("minigame2.game.feedback_wrong_msg", "Chưa đúng. Hãy đọc kỹ kiện tiếp theo.")}
             {feedback === "idle" &&
-              "Chọn làn ĐÚNG hoặc SAI cho kiện hàng này."}
+              t("minigame2.game.feedback_idle", "Chọn làn ĐÚNG hoặc SAI cho kiện hàng này.")}
           </div>
         </section>
       </div>

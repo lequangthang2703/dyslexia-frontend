@@ -172,5 +172,85 @@
       "bee_fail": "Flying to the next flower...",
       "flight_path": "flight path"
     }
+  },
+  "minigame2": {
+    "instruction": {
+      "tag": "Minigame 2",
+      "title": "Robot Delivery: Fact Checker",
+      "desc": "Read each statement and guide the robot to the TRUE or FALSE lane to deliver the package.",
+      "guide_title": "Instructions",
+      "step_1": "Carefully read the information package on the screen.",
+      "step_2": "Select the TRUE LANE if the statement is a fact.",
+      "step_3": "Select the FALSE LANE if the statement is incorrect.",
+      "encouragement": "The goal is to read quickly, choose the right lane, and deliver all 5 packages.",
+      "start_btn": "Start Playing"
+    },
+    "game": {
+      "task": "Mission",
+      "true_lane": "TRUE LANE",
+      "false_lane": "FALSE LANE",
+      "delivered": "Delivered",
+      "missed": "Wrong Lane",
+      "package_title": "Package to classify",
+      "feedback_right_msg": "Correct. Robot delivered the package safely.",
+      "feedback_wrong_msg": "Incorrect. Robot must return to the station.",
+      "feedback_idle": "Select TRUE or FALSE lane for this package.",
+      "log_title": "Lane Log",
+      "log_empty": "Robot is waiting for the first package."
+    }
+  },
+  "minigame3": {
+    "instruction": {
+      "tag": "Minigame 3",
+      "title": "Magic Tree",
+      "guide_title": "How to play",
+      "step_1": "Look at the illustration and listen to the sound of the word.",
+      "step_2": "Select the letters on the screen to fill in the blanks correctly.",
+      "step_3": "Each correct answer helps your Magic Tree grow!",
+      "start_btn": "Play Now!"
+    },
+    "game": {
+      "back_btn": "❮ Back",
+      "word_counter": "Word"
+    }
+  },
+  "minigame4": {
+    "instruction": {
+      "tag": "Minigame 4",
+      "title": "Letter Meteor Station",
+      "desc": "Help the spaceship find the correct letter among the jamming meteors. Look closely because many letters have very similar shapes.",
+      "guide_title": "Instructions",
+      "step_1": "Click",
+      "step_1_btn": "Listen",
+      "step_1_after": "to hear the mission.",
+      "step_2": "Look at the target letter on the right panel, then select the meteor with the exact same letter.",
+      "step_3": "Some letters are easy to confuse like b/d/p/q, a/ă/â, o/ô/ơ. Observe slowly and carefully.",
+      "encouragement": "Each correct answer will save a meteor and help the spaceship complete its mission.",
+      "start_btn": "Start Playing"
+    },
+    "game": {
+      "exit": "Exit",
+      "mission": "Current Mission",
+      "mission_title": "Find the correct letter",
+      "question": "Question",
+      "group": "Letter Group",
+      "select_prompt": "Please select",
+      "listen_btn": "Listen Again",
+      "rescued": "Rescued",
+      "progress": "Progress",
+      "log_title": "Selection Log",
+      "log_empty": "Results for each turn will appear here.",
+      "feedback_right": "Correct. The meteor has been saved.",
+      "feedback_wrong": "Incorrect. The target letter is",
+      "feedback_idle": "Look closely at the confusing letters before choosing."
+    }
+  },
+  "rating": {
+    "awesome": "Awesome!",
+    "default_game": "Minigame",
+    "default_msg": "You did an excellent job!",
+    "your_score": "Your Score",
+    "play_again": "Play Again",
+    "play_other": "Play Other Games"
   }
 }

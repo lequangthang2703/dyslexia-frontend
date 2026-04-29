@@ -1,24 +1,31 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { allWords, vietnameseAlphabet } from "../../../data/minigame3";
+import { useTranslation } from "react-i18next";
+import GameLanguageSwitch from "../../common/GameLanguageSwitch";
+import { vietnameseAlphabet } from "../../../data/minigame3"; // Keep only the alphabet import!
 import "../../../styles/GameCanvas.css";
 import "../../../styles/Tree.css";
 
-type PuzzleChar =
-  | string
-  | { char: string; status: "empty" | "correct" | "incorrect" };
+type PuzzleChar = string | { char: string; status: "empty" | "correct" | "incorrect" };
+
+export type QuestionResponse = {
+  id: number;
+  minigame_number: string;
+  game_payload: { puzzle: string; answer: string; img: string };
+  content: {
+    vi: { word: string; description: string; example: string };
+    en: { word: string; description: string; example: string };
+  };
+};
 
 const getRandomItems = <T,>(array: T[], count: number): T[] => {
   const shuffled = [...array].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, array.length));
 };
 
+// ==========================================
+// UNTOUCHED TREE COMPONENT
+// ==========================================
 interface TreeProps {
   progress: number;
   hideProgressBar?: boolean;
@@ -36,123 +43,73 @@ const Tree = ({ progress, hideProgressBar = false }: TreeProps) => {
     <div className="tree-and-progress">
       <div className="tree-container">
         <div className="ground" />
-        <div
-          className="trunk"
-          style={
-            { "--trunk-height": `${trunkHeight}px` } as React.CSSProperties
-          }
-        />
-        <div
-          className="foliage foliage-main"
-          style={
-            {
-              "--scale": mainFoliageScale,
-              "--trunk-height": `${trunkHeight}px`,
-            } as React.CSSProperties
-          }
-        >
-          <div
-            className="fruit"
-            style={
-              {
-                top: "30%",
-                left: "25%",
-                "--fruit-scale": fruitScale,
-              } as React.CSSProperties
-            }
-          ></div>
-          <div
-            className="fruit"
-            style={
-              {
-                top: "55%",
-                left: "70%",
-                "--fruit-scale": fruitScale,
-              } as React.CSSProperties
-            }
-          ></div>
+        <div className="trunk" style={{ "--trunk-height": `${trunkHeight}px` } as React.CSSProperties} />
+        <div className="foliage foliage-main" style={{ "--scale": mainFoliageScale, "--trunk-height": `${trunkHeight}px` } as React.CSSProperties}>
+          <div className="fruit" style={{ top: "30%", left: "25%", "--fruit-scale": fruitScale } as React.CSSProperties}></div>
+          <div className="fruit" style={{ top: "55%", left: "70%", "--fruit-scale": fruitScale } as React.CSSProperties}></div>
         </div>
-        <div
-          className="foliage foliage-left"
-          style={
-            {
-              "--scale": leftBranchScale,
-              "--trunk-height": `${trunkHeight}px`,
-            } as React.CSSProperties
-          }
-        >
-          <div
-            className="fruit"
-            style={
-              {
-                top: "25%",
-                left: "20%",
-                "--fruit-scale": fruitScale,
-              } as React.CSSProperties
-            }
-          ></div>
-          <div
-            className="fruit"
-            style={
-              {
-                top: "60%",
-                left: "50%",
-                "--fruit-scale": fruitScale,
-              } as React.CSSProperties
-            }
-          ></div>
+        <div className="foliage foliage-left" style={{ "--scale": leftBranchScale, "--trunk-height": `${trunkHeight}px` } as React.CSSProperties}>
+          <div className="fruit" style={{ top: "25%", left: "20%", "--fruit-scale": fruitScale } as React.CSSProperties}></div>
+          <div className="fruit" style={{ top: "60%", left: "50%", "--fruit-scale": fruitScale } as React.CSSProperties}></div>
         </div>
-        <div
-          className="foliage foliage-right"
-          style={
-            {
-              "--scale": rightBranchScale,
-              "--trunk-height": `${trunkHeight}px`,
-            } as React.CSSProperties
-          }
-        >
-          <div
-            className="fruit"
-            style={
-              {
-                top: "50%",
-                left: "45%",
-                "--fruit-scale": fruitScale,
-              } as React.CSSProperties
-            }
-          ></div>
+        <div className="foliage foliage-right" style={{ "--scale": rightBranchScale, "--trunk-height": `${trunkHeight}px` } as React.CSSProperties}>
+          <div className="fruit" style={{ top: "50%", left: "45%", "--fruit-scale": fruitScale } as React.CSSProperties}></div>
         </div>
       </div>
       {!hideProgressBar && (
         <div className="progress-bar-container">
-          <div
-            className="progress-bar-fill"
-            style={{ width: `${progress}%` }}
-          ></div>
+          <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
         </div>
       )}
     </div>
   );
 };
 
-// --- MAIN GAME COMPONENT ---
+// ==========================================
+// MAIN GAME COMPONENT
+// ==========================================
 const MiniGame3: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  
+  // 1. API Fetching Logic
+  const [dbQuestions, setDbQuestions] = useState<QuestionResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/v1/questions/three");
+        if (response.ok) {
+          const data = await response.json();
+          setDbQuestions(data);
+        } else {
+          console.error("Failed to fetch questions");
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
+
   const [gameId, setGameId] = useState(1);
   const [showIntro, setShowIntro] = useState(true);
 
   const wordsPerGame = 5;
   const currentWords = useMemo(
-    () => getRandomItems(allWords, wordsPerGame),
-    [gameId]
+    () => getRandomItems(dbQuestions, Math.min(wordsPerGame, dbQuestions.length)),
+    [dbQuestions, gameId]
   );
 
   const totalBlanksInGame = useMemo(
-    () => currentWords.reduce((acc, word) => acc + word.answer.length, 0),
+    () => currentWords.reduce((acc, word) => acc + word.game_payload.answer.length, 0),
     [currentWords]
   );
+  
   const [totalCorrectBlanks, setTotalCorrectBlanks] = useState(0);
-
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [filledBlanks, setFilledBlanks] = useState<number>(0);
   const [puzzleDisplay, setPuzzleDisplay] = useState<PuzzleChar[]>([]);
@@ -167,7 +124,11 @@ const MiniGame3: React.FC = () => {
     [currentWords, currentWordIndex]
   );
 
-  // --- Helper to play System Sounds (Correct/Wrong) ---
+  // i18n Translation Selection
+  const currentLang = i18n.language.startsWith("en") ? "en" : "vi";
+  const currentWordData = currentWord ? currentWord.content[currentLang] : null;
+
+  // --- Untouched System Sounds ---
   const playSystemSound = (type: "correct" | "wrong") => {
     try {
       const soundPath = `/minigame3/audio/${type}.mp3`;
@@ -188,7 +149,7 @@ const MiniGame3: React.FC = () => {
     }
 
     try {
-      const audioFileName = currentWord.img.replace(/\.[^/.]+$/, ".mp3");
+      const audioFileName = currentWord.game_payload.img.replace(/\.[^/.]+$/, ".mp3");
       const audioPath = `/minigame3/audio/${audioFileName}`;
 
       const audio = new Audio(audioPath);
@@ -197,9 +158,7 @@ const MiniGame3: React.FC = () => {
       const playPromise = audio.play();
 
       if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log("Autoplay prevented:", error);
-        });
+        playPromise.catch((error) => console.log("Autoplay prevented:", error));
       }
     } catch (error) {
       console.error("Audio setup failed", error);
@@ -211,7 +170,7 @@ const MiniGame3: React.FC = () => {
     setFilledBlanks(0);
     setNextButtonDisabled(true);
     setShowFullWord(false);
-    const initialPuzzle: PuzzleChar[] = currentWord.puzzle
+    const initialPuzzle: PuzzleChar[] = currentWord.game_payload.puzzle
       .split("")
       .map((char) => (char === "_" ? { char: "", status: "empty" } : char));
     setPuzzleDisplay(initialPuzzle);
@@ -223,76 +182,47 @@ const MiniGame3: React.FC = () => {
       const timer = setTimeout(() => {
         playWordSound();
       }, 500);
-
       return () => clearTimeout(timer);
     } else if (!gameCompleted && currentWord && showIntro) {
       loadWord();
     }
-  }, [
-    currentWordIndex,
-    loadWord,
-    gameCompleted,
-    currentWord,
-    playWordSound,
-    showIntro,
-  ]);
+  }, [currentWordIndex, loadWord, gameCompleted, currentWord, playWordSound, showIntro]);
 
-  // --- Handle Letter Click with Correct/Wrong Sounds ---
+  // --- Untouched Letter Logic ---
   const handleLetterClick = (letter: string) => {
-    if (!nextButtonDisabled || gameCompleted || !currentWord || showIntro)
-      return;
+    if (!nextButtonDisabled || gameCompleted || !currentWord || showIntro) return;
 
-    const firstEmptyBlankIndex = puzzleDisplay.findIndex(
-      (item) => typeof item === "object" && item.status === "empty"
-    );
+    const firstEmptyBlankIndex = puzzleDisplay.findIndex((item) => typeof item === "object" && item.status === "empty");
 
     if (firstEmptyBlankIndex !== -1) {
       const newPuzzleDisplay = [...puzzleDisplay];
-      const expectedLetter = currentWord.answer[filledBlanks];
+      const expectedLetter = currentWord.game_payload.answer[filledBlanks];
       const isLastWordOfGame = currentWordIndex === currentWords.length - 1;
 
       if (letter === expectedLetter) {
-        // --- CORRECT CASE ---
         playSystemSound("correct");
-
-        (newPuzzleDisplay[firstEmptyBlankIndex] as any) = {
-          char: letter,
-          status: "correct",
-        };
+        (newPuzzleDisplay[firstEmptyBlankIndex] as any) = { char: letter, status: "correct" };
         setFilledBlanks((prev) => prev + 1);
-
         setTotalCorrectBlanks((prev) => prev + 1);
 
-        const isWordFinished = filledBlanks + 1 === currentWord.answer.length;
+        const isWordFinished = filledBlanks + 1 === currentWord.game_payload.answer.length;
 
         if (isWordFinished) {
           setShowFullWord(true);
-
           if (isLastWordOfGame) {
             setNextButtonDisabled(true);
-            setTimeout(() => {
-              setGameCompleted(true);
-            }, 2000);
+            setTimeout(() => setGameCompleted(true), 2000);
           } else {
             setNextButtonDisabled(false);
           }
         }
       } else {
-        // --- INCORRECT CASE ---
         playSystemSound("wrong");
-
-        (newPuzzleDisplay[firstEmptyBlankIndex] as any) = {
-          char: letter,
-          status: "incorrect",
-        };
-
+        (newPuzzleDisplay[firstEmptyBlankIndex] as any) = { char: letter, status: "incorrect" };
         setShowFullWord(true);
-
         if (isLastWordOfGame) {
           setNextButtonDisabled(true);
-          setTimeout(() => {
-            setGameCompleted(true);
-          }, 2000);
+          setTimeout(() => setGameCompleted(true), 2000);
         } else {
           setNextButtonDisabled(false);
         }
@@ -314,16 +244,14 @@ const MiniGame3: React.FC = () => {
     setTotalCorrectBlanks(0);
   };
 
-  const handleStartGame = () => {
-    setShowIntro(false);
-  };
+  const handleStartGame = () => setShowIntro(false);
 
-  const progressPercentage =
-    totalBlanksInGame > 0 ? (totalCorrectBlanks / totalBlanksInGame) * 100 : 0;
+  const progressPercentage = totalBlanksInGame > 0 ? (totalCorrectBlanks / totalBlanksInGame) * 100 : 0;
 
-  const imagePath = `/minigame3/images/${
-    currentWord?.img || "placeholder.jpg"
-  }`;
+  if (isLoading) return <div className="flex h-screen items-center justify-center font-bold text-blue-600">Loading Game Data...</div>;
+  if (!currentWord) return <div className="flex h-screen items-center justify-center font-bold text-rose-600">No questions available.</div>;
+
+  const imagePath = `/minigame3/images/${currentWord.game_payload.img || "placeholder.jpg"}`;
 
   if (gameCompleted) {
     let resultTitle = "";
@@ -350,20 +278,15 @@ const MiniGame3: React.FC = () => {
       <div className="flex flex-col items-center justify-between p-8 bg-gradient-to-br from-blue-100 via-blue-200 to-sky-200 text-slate-800 relative">
         <div className="absolute top-1/4 left-1/4 w-32 h-16 bg-white rounded-full opacity-30 blur-2xl z-0"></div>
         <div className="absolute bottom-1/3 right-1/4 w-48 h-24 bg-white rounded-full opacity-20 blur-xl z-0"></div>
-
         <div className="text-center z-10">
-          <h1 className="text-5xl font-extrabold text-blue-800 drop-shadow-md mb-2">
-            {resultTitle}
-          </h1>
+          <h1 className="text-5xl font-extrabold text-blue-800 drop-shadow-md mb-2">{resultTitle}</h1>
           <p className="text-xl text-blue-700 font-medium">{resultSubtitle}</p>
         </div>
-
         <div className="flex flex-col items-center justify-center w-full max-w-6xl mb-8 z-10">
           <div className="transform transition hover:scale-105 duration-300">
             <Tree progress={progressPercentage} hideProgressBar={true} />
           </div>
         </div>
-
         <div className="flex flex-col sm:flex-row gap-4 mb-8 z-10">
           <button
             className="py-4 px-10 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white text-xl font-bold rounded-full shadow-xl shadow-blue-300 transform transition hover:-translate-y-1 active:translate-y-0.5"
@@ -371,7 +294,6 @@ const MiniGame3: React.FC = () => {
           >
             Plant New Tree
           </button>
-
           <button
             className="py-4 px-10 bg-white/80 hover:bg-white text-blue-700 font-semibold rounded-full border-2 border-blue-200 hover:border-blue-300 transition-colors shadow-md"
             onClick={() => navigate("/training")}
@@ -383,47 +305,39 @@ const MiniGame3: React.FC = () => {
     );
   }
 
-  if (!currentWord) return <div>Loading...</div>;
-
   return (
     <div className="game-wrapper">
+      {/* Top right language toggle + back button */}
+      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-50">
+         <button className="back-btn !relative !top-0 !left-0" onClick={() => navigate("/training")}>
+            {t("minigame3.game.back_btn")}
+         </button>
+         <GameLanguageSwitch />
+      </div>
+
       {showIntro && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md transition-all duration-500">
           <h1 className="absolute top-10 text-4xl font-bold text-white drop-shadow-lg">
-            Minigame 3: <span className="text-green-400">Cây Thần Kỳ🌳</span>
+            {t("minigame3.instruction.tag")}: <span className="text-green-400">{t("minigame3.instruction.title")} 🌳</span>
           </h1>
           <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-lg w-full relative animate-[fadeInUp_0.5s_ease-out]">
             <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center drop-shadow-sm">
-              Hướng dẫn chơi
+              {t("minigame3.instruction.guide_title")}
             </h2>
 
             <div className="space-y-6 text-lg text-slate-700 mb-8 px-2">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">
-                  1
-                </div>
-                <p className="leading-tight pt-0.5">
-                  Nhìn hình ảnh minh họa và lắng nghe âm thanh của từ.
-                </p>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">1</div>
+                <p className="leading-tight pt-0.5">{t("minigame3.instruction.step_1")}</p>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">
-                  2
-                </div>
-                <p className="leading-tight pt-0.5">
-                  Chọn các chữ cái trên màn hình để điền vào chỗ trống cho đúng.
-                </p>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">2</div>
+                <p className="leading-tight pt-0.5">{t("minigame3.instruction.step_2")}</p>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">
-                  3
-                </div>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-sm">3</div>
                 <p className="leading-tight pt-0.5">
-                  Mỗi câu trả lời đúng sẽ giúp{" "}
-                  <span className="font-bold text-green-600">
-                    Cây Thần Kỳ🌳
-                  </span>{" "}
-                  của bạn lớn lên!
+                  {t("minigame3.instruction.step_3")} <span className="font-bold text-green-600">🌳</span>
                 </p>
               </div>
             </div>
@@ -432,51 +346,32 @@ const MiniGame3: React.FC = () => {
               onClick={handleStartGame}
               className="w-full py-4 bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white text-xl font-bold rounded-full shadow-lg shadow-blue-200 transform transition hover:-translate-y-1 active:translate-y-0.5"
             >
-              Bắt đầu ngay!
+              {t("minigame3.instruction.start_btn")}
             </button>
           </div>
         </div>
       )}
 
-      <button className="back-btn" onClick={() => navigate("/training")}>
-        ❮ Quay lại
-      </button>
-
-      <div className="game-container">
+      <div className="game-container mt-12">
         <div className="left-panel">
-          <div
-            className={`image-container ${
-              showFullWord ? "show-full-word" : ""
-            }`}
-          >
+          <div className={`image-container ${showFullWord ? "show-full-word" : ""}`}>
             <img
               src={imagePath}
-              alt={currentWord.full}
+              alt={currentWordData?.word}
               onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://placehold.co/350x280/e0e0e0/757575?text=Image+Missing";
+                (e.target as HTMLImageElement).src = "https://placehold.co/350x280/e0e0e0/757575?text=Image+Missing";
               }}
             />
-            <p>{currentWord.full}</p>
+            <p>{currentWordData?.word}</p>
           </div>
 
           <div className="puzzle-platform">
             {puzzleDisplay.map((item, index) => {
               if (typeof item === "string") {
-                if (item === " ") {
-                  return <span key={index} className="puzzle-space"></span>;
-                }
-                return (
-                  <span key={index} className="puzzle-char">
-                    {item}
-                  </span>
-                );
+                if (item === " ") return <span key={index} className="puzzle-space"></span>;
+                return <span key={index} className="puzzle-char">{item}</span>;
               }
-              return (
-                <span key={index} className={`puzzle-blank ${item.status}`}>
-                  {item.char}
-                </span>
-              );
+              return <span key={index} className={`puzzle-blank ${item.status}`}>{item.char}</span>;
             })}
           </div>
         </div>
@@ -484,33 +379,21 @@ const MiniGame3: React.FC = () => {
         <div className="middle-panel">
           <div className="keyboard-container">
             {vietnameseAlphabet.map((letter) => (
-              <button
-                key={letter}
-                className="keyboard-button"
-                onClick={() => handleLetterClick(letter)}
-              >
+              <button key={letter} className="keyboard-button" onClick={() => handleLetterClick(letter)}>
                 {letter}
               </button>
             ))}
           </div>
           <div className="controls-container">
-            <button className="control-btn sound-btn" onClick={playWordSound}>
-              🔊
-            </button>
-            <button
-              className="control-btn next-btn"
-              onClick={loadNextWord}
-              disabled={nextButtonDisabled}
-            >
-              Next ➔
-            </button>
+            <button className="control-btn sound-btn" onClick={playWordSound}>🔊</button>
+            <button className="control-btn next-btn" onClick={loadNextWord} disabled={nextButtonDisabled}>Next ➔</button>
           </div>
         </div>
 
         <div className="right-panel">
           <div className="progress-info">
             <div className="word-counter">
-              Word {currentWordIndex + 1} / {currentWords.length}
+              {t("minigame3.game.word_counter")} {currentWordIndex + 1} / {currentWords.length}
             </div>
           </div>
           <Tree progress={progressPercentage} />

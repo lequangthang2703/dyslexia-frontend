@@ -172,5 +172,85 @@
       "bee_fail": "Bay tiếp sang bông sau",
       "flight_path": "đường bay"
     }
+  },
+  "minigame2": {
+    "instruction": {
+      "tag": "Minigame 2",
+      "title": "Robot Delivery: Giao Hàng Sự Thật",
+      "desc": "Đọc từng mệnh đề và đưa robot vào làn ĐÚNG hoặc làn SAI để giao kiện hàng.",
+      "guide_title": "Hướng dẫn",
+      "step_1": "Đọc kỹ kiện hàng thông tin xuất hiện trên màn hình.",
+      "step_2": "Chọn LÀN ĐÚNG nếu mệnh đề là sự thật.",
+      "step_3": "Chọn LÀN SAI nếu mệnh đề không chính xác.",
+      "encouragement": "Mục tiêu là đọc hiểu nhanh, chọn đúng làn và giao đủ 5 kiện hàng.",
+      "start_btn": "Bắt đầu chơi"
+    },
+    "game": {
+      "task": "Nhiệm vụ",
+      "true_lane": "LÀN ĐÚNG",
+      "false_lane": "LÀN SAI",
+      "delivered": "Giao được",
+      "missed": "Nhầm làn",
+      "package_title": "Kiện hàng cần phân loại",
+      "feedback_right_msg": "Chính xác. Robot đã giao kiện hàng an toàn.",
+      "feedback_wrong_msg": "Nhầm làn rồi, robot phải quay lại trạm.",
+      "feedback_idle": "Chọn làn ĐÚNG hoặc SAI cho kiện hàng này.",
+      "log_title": "Nhật ký làn",
+      "log_empty": "Robot đang chờ kiện hàng đầu tiên."
+    }
+  },
+  "minigame3": {
+    "instruction": {
+      "tag": "Minigame 3",
+      "title": "Cây Thần Kỳ",
+      "guide_title": "Hướng dẫn chơi",
+      "step_1": "Nhìn hình ảnh minh họa và lắng nghe âm thanh của từ.",
+      "step_2": "Chọn các chữ cái trên màn hình để điền vào chỗ trống cho đúng.",
+      "step_3": "Mỗi câu trả lời đúng sẽ giúp Cây Thần Kỳ của bạn lớn lên!",
+      "start_btn": "Bắt đầu ngay!"
+    },
+    "game": {
+      "back_btn": "❮ Quay lại",
+      "word_counter": "Từ"
+    }
+  },
+  "minigame4": {
+    "instruction": {
+      "tag": "Minigame 4",
+      "title": "Trạm Chữ Sao Băng",
+      "desc": "Giúp phi thuyền tìm đúng chữ giữa các sao băng gây nhiễu. Hãy nhìn kỹ vì nhiều chữ có hình dạng rất giống nhau.",
+      "guide_title": "Hướng dẫn",
+      "step_1": "Bấm",
+      "step_1_btn": "Nghe",
+      "step_1_after": "để nghe nhiệm vụ.",
+      "step_2": "Nhìn chữ mục tiêu ở bảng bên phải, rồi chọn sao băng có chữ giống hệt.",
+      "step_3": "Một số chữ dễ nhầm như b/d/p/q, a/ă/â, o/ô/ơ. Hãy quan sát thật chậm và chắc.",
+      "encouragement": "Mỗi câu đúng sẽ cứu được một sao băng và giúp phi thuyền hoàn thành nhiệm vụ.",
+      "start_btn": "Bắt đầu chơi"
+    },
+    "game": {
+      "exit": "Kết thúc",
+      "mission": "Nhiệm vụ hiện tại",
+      "mission_title": "Tìm đúng chữ trong sao băng",
+      "question": "Câu",
+      "group": "Nhóm chữ",
+      "select_prompt": "Hãy chọn",
+      "listen_btn": "Nghe lại",
+      "rescued": "Cứu đúng",
+      "progress": "Tiến độ",
+      "log_title": "Nhật ký chọn chữ",
+      "log_empty": "Kết quả từng lượt sẽ hiện tại đây.",
+      "feedback_right": "Chính xác. Sao băng đã được cứu.",
+      "feedback_wrong": "Chưa đúng. Chữ cần tìm là",
+      "feedback_idle": "Nhìn kỹ các chữ dễ nhầm rồi chọn."
+    }
+  },
+  "rating": {
+    "awesome": "Tuyệt vời!",
+    "default_game": "Trò chơi",
+    "default_msg": "Con đã hoàn thành xuất sắc!",
+    "your_score": "Điểm số của con",
+    "play_again": "Chơi lại",
+    "play_other": "Chơi trò khác"
   }
 }
